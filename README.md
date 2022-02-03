@@ -16,7 +16,7 @@ python3 src/packager.py -t zhinst_1120_phase1_S27 -b zhinst_1120_phase1_S26 -r g
 
 
 
-Pre-requisitesto use in Jenkins:
+Pre-requisites to use in Jenkins:
 - Credentials for GitHub user which has access rights to sugarcrm repositories need to be configured in Jenkins as Username/Password Credentials with ID "GitHub Sugar User"
 - GitHub Token for user which has access rights to sugarcrm repositories need to be configured in Jenkins as Secret Text with ID "GitHub Token"
 - Git repository needs to be provided in the form git@github.com:repository.git
