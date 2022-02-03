@@ -1,18 +1,19 @@
 import os
 from os import path
 import shutil
+from shutil import ignore_patterns
 import argparse
 import manifest
 import time
 
-# Command: python3 src/packager.py -t zhinst_1120_phase1_S27 -b zhinst_1120_phase1_S26 -r git@github.com:sugarcrm-ps/ps-dev-zhinst.git -u "11.*" -a "ZHINST Phase 1 S27"
+# Command: python3 src/packager.py -t zhinst_1120_phase1_S27 -b zhinst_1120_phase1_S26 -r git@github.com:sugarcrm-ps/ps-dev-zhinst.git -u "1.0" -a "ZHINST Phase 1 S27"
 
 class Packager():
 
     def __init__(self):
         cwd = os.getcwd()
-        self.repoPath = cwd+"/../repo"
-        self.deltaPath=cwd+"/../delta"
+        self.repoPath = cwd+"/repo"
+        self.deltaPath=cwd+"/delta"
         self.packagePath = cwd+"/package"
         self.removeLegacyFilesScript = cwd+"/removeLegacyFiles.php"
         self.deleteFiles = False
@@ -42,22 +43,22 @@ class Packager():
 
     def createPackage(self):
         print("1. Cleanup...")
-        #self.cleanup()
+        self.cleanup()
 
         print("2. Get sources...")
-        #self.performGitCheckout()
+        self.performGitCheckout()
 
         print("3. Perform delta...")
-        #self.performDelta()
+        self.performDelta()
 
         print("4. Copy files...")
-        #self.copyFiles()
+        self.copyFiles()
 
         print("5. Create manifest...")
-        #self.man.createManifest(self.packagePath)
+        self.man.createManifest(self.packagePath)
 
         print("6. Zip package...")
-        shutil.make_archive(os.getcwd()+"/"+time.strftime("%Y%m%d")+"_"+self.name.replace(" ", "_"), 'zip', self.packagePath)
+        shutil.make_archive(self.packagePath+"/../"+time.strftime("%Y%m%d")+"_"+self.name.replace(" ", "_"), 'zip', self.packagePath)
 
     def performGitCheckout(self):
         os.system("git clone -b "+self.base+" "+self.repo+" "+self.repoPath)
@@ -81,17 +82,23 @@ class Packager():
         # Application files
         shutil.copytree(self.deltaPath+"/sugarcrm", self.packagePath+"/files")
         # Script files
-        postScriptsPath = self.packagePath+"/customer/upgrade/"+self.target+"/scripts/php/post/"
-        preScriptsPath = self.packagePath+"/customer/upgrade/"+self.target+"/scripts/php/pre/"
-        if (path.exists(postScriptsPath)):
-            shutil.copytree(self.deltaPath+"/scripts/post", postScriptsPath)
-        if (path.exists(preScriptsPath)):
-            shutil.copytree(self.deltaPath+"/scripts/pre", preScriptsPath)
+        postScriptsPathSource = self.deltaPath+"/customer/upgrade/"+self.target+"/scripts/php/post/"
+        preScriptsPathSource = self.deltaPath+"/customer/upgrade/"+self.target+"/scripts/php/pre/"
+        postScriptsPathTarget = self.packagePath+"/scripts/post/"
+        preScriptsPathTarget = self.packagePath+"/scripts/pre"
+        if (path.exists(postScriptsPathSource)):
+            shutil.copytree(postScriptsPathSource, postScriptsPathTarget, ignore=ignore_patterns('.*'))
+        else :
+            print("No post script files found")
+        if (path.exists(preScriptsPathSource)):
+            shutil.copytree(preScriptsPathSource, preScriptsPathTarget, ignore=ignore_patterns('.*'))
+        else :
+            print("No pre script files found")
         # removeLegacyFiles script
         if (self.deleteFiles):
-            if (not path.exists(preScriptsPath)):
-                os.mkdir(preScriptsPath)
-            shutil.copyfile(self.removeLegacyFilesScript, preScriptsPath)
+            if (not path.exists(preScriptsPathTarget)):
+                os.mkdir(preScriptsPathTarget)
+            shutil.copyfile(self.removeLegacyFilesScript, preScriptsPathTarget, ignore=ignore_patterns('.*'))
 
     def cleanup(self):
         if (path.exists(self.repoPath)):

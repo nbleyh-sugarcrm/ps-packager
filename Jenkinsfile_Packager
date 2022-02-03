@@ -10,7 +10,7 @@ pipeline {
     agent any
     parameters {
         string(name: 'BASE_BRANCH', defaultValue: '11_3_base', description: 'Branch containing the base code')
-        string(name: 'TARGET_BRANCH', defaultValue: 'r10', description: 'Branch containing the target code')
+        string(name: 'TARGET_BRANCH', defaultValue: 'attb_113_phase1', description: 'Branch containing the target code')
         string(name: 'GIT_REPO', defaultValue: 'https://github.com/sugarcrm-ps/ps-dev-attb', description: 'Git repository of the Project')
         string(name: 'SUGAR_VERSION', defaultValue: '11.*', description: 'Sugar version')
         string(name: 'MANIFEST_DESCRIPTION', defaultValue: 'Generated Sugar Package', description: 'Description of the Sugar Package')
@@ -31,7 +31,7 @@ pipeline {
         stage('Generate Sugar Package') {
           steps {
             sh '''
-              python3 src/packager.py -t ${TARGET_BRANCH} -b ${BASE_BRANCH} -r ${GIT_REPO} -v ${SUGAR_VERSION} -a "${PACKAGE_NAME}" -u {BUILD_NUMBER} -d "${MANIFEST_DESCRIPTION}"
+              python3 src/packager.py -t ${TARGET_BRANCH} -b ${BASE_BRANCH} -r ${GIT_REPO} -v ${SUGAR_VERSION} -a "${PACKAGE_NAME}" -u ${BUILD_NUMBER} -d "${MANIFEST_DESCRIPTION}"
             '''
             archiveArtifacts artifacts: '*.zip', onlyIfSuccessful: true
         }
