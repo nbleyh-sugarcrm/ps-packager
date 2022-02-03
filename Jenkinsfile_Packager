@@ -31,10 +31,9 @@ pipeline {
         stage('Generate Sugar Package') {
           steps {
             sh '''
-              cd ps-packager
               python3 src/packager.py -t ${TARGET_BRANCH} -b ${BASE_BRANCH} -r ${GIT_REPO} -v ${SUGAR_VERSION} -a "${PACKAGE_NAME}" -u {BUILD_NUMBER} -d "${MANIFEST_DESCRIPTION}"
             '''
-            archiveArtifacts artifacts: 'ps-packager/*.zip', onlyIfSuccessful: true
+            archiveArtifacts artifacts: '*.zip', onlyIfSuccessful: true
         }
      }
  }
