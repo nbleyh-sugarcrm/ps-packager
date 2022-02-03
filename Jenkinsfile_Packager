@@ -4,6 +4,7 @@ Pre-requisites:
 - GitHub Token for user which has access rights to sugarcrm repositories need to be configured in Jenkins as Secret Text with ID "GitHub Token"
 - Git needs to be installed on Jenkins Worker
 - Pyhton 3 needs to installed on Jenkins worker
+- Rsync needs to be installed on Jenkins worker
 */
 
 pipeline {
@@ -11,17 +12,12 @@ pipeline {
     parameters {
         string(name: 'BASE_BRANCH', defaultValue: '11_3_base', description: 'Branch containing the base code')
         string(name: 'TARGET_BRANCH', defaultValue: 'attb_113_phase1', description: 'Branch containing the target code')
-        string(name: 'GIT_REPO', defaultValue: 'https://github.com/sugarcrm-ps/ps-dev-attb', description: 'Git repository of the Project')
+        string(name: 'GIT_REPO', defaultValue: 'git@github.com:sugarcrm-ps/ps-dev-attb', description: 'Git repository of the Project')
         string(name: 'SUGAR_VERSION', defaultValue: '11.*', description: 'Sugar version')
         string(name: 'MANIFEST_DESCRIPTION', defaultValue: 'Generated Sugar Package', description: 'Description of the Sugar Package')
         string(name: 'PACKAGE_NAME', defaultValue: 'Package', description: 'Name of the Sugar Package')
     }
      stages {
-        stage('Clean workspace') {
-            steps {
-                 sh 'sudo rm -rf ./ps-packager'
-            }
-        }
         stage('Get Sources') {
             steps {
                 cleanWs()
