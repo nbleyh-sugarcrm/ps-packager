@@ -9,13 +9,12 @@ Pre-requisites:
 pipeline {
     agent any
     parameters {
-        string(name: 'BASE_BRANCH', defaultValue: 'base_sugar102', description: 'Branch containing the base code')
+        string(name: 'BASE_BRANCH', defaultValue: '11_3_base', description: 'Branch containing the base code')
         string(name: 'TARGET_BRANCH', defaultValue: 'r10', description: 'Branch containing the target code')
-        string(name: 'GIT_REPO', defaultValue: 'https://github.com/sugarcrm-ps/ps-dev-agtb', description: 'Git repository of the Project')
-        string(name: 'SUGAR_VERSION', defaultValue: '11.0.0', description: 'Sugar version')
+        string(name: 'GIT_REPO', defaultValue: 'https://github.com/sugarcrm-ps/ps-dev-attb', description: 'Git repository of the Project')
+        string(name: 'SUGAR_VERSION', defaultValue: '11.*', description: 'Sugar version')
         string(name: 'MANIFEST_DESCRIPTION', defaultValue: 'Generated Sugar Package', description: 'Description of the Sugar Package')
         string(name: 'PACKAGE_NAME', defaultValue: 'Package', description: 'Name of the Sugar Package')
-        string(name: 'PACKAGE_VERSION', defaultValue: 'Package', description: 'Name of the Sugar Package')
     }
      stages {
         stage('Clean workspace') {
@@ -26,7 +25,7 @@ pipeline {
         stage('Get Sources') {
             steps {
                 cleanWs()
-                checkout scm: [$class: 'GitSCM', userRemoteConfigs: [[credentialsId: 'GitHub Sugar User', url: 'https://github.com/nbleyh-sugarcrm/ps-packager']]]
+                git branch: 'main', credentialsId: 'GitHub Sugar User', url: 'https://github.com/nbleyh-sugarcrm/ps-packager'
             }
         }
         stage('Generate Sugar Package') {
