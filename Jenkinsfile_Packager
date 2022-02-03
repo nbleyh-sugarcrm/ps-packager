@@ -1,0 +1,42 @@
+/*
+Pre-requisites:
+- Credentials for GitHub user which has access rights to sugarcrm repositories need to be configured in Jenkins as Username/Password Credentials with ID "GitHub Sugar User"
+- GitHub Token for user which has access rights to sugarcrm repositories need to be configured in Jenkins as Secret Text with ID "GitHub Token"
+- Git needs to be installed on Jenkins Worker
+- Pyhton 3 needs to installed on Jenkins worker
+*/
+
+pipeline {
+    agent any
+    parameters {
+        string(name: 'BASE_BRANCH', defaultValue: 'base_sugar102', description: 'Branch containing the base code')
+        string(name: 'TARGET_BRANCH', defaultValue: 'r10', description: 'Branch containing the target code')
+        string(name: 'GIT_REPO', defaultValue: 'https://github.com/sugarcrm-ps/ps-dev-agtb', description: 'Git repository of the Project')
+        string(name: 'SUGAR_VERSION', defaultValue: '11.0.0', description: 'Sugar version')
+        string(name: 'MANIFEST_DESCRIPTION', defaultValue: 'Generated Sugar Package', description: 'Description of the Sugar Package')
+        string(name: 'PACKAGE_NAME', defaultValue: 'Package', description: 'Name of the Sugar Package')
+        string(name: 'PACKAGE_VERSION', defaultValue: 'Package', description: 'Name of the Sugar Package')
+    }
+     stages {
+        stage('Clean workspace') {
+            steps {
+                 sh 'sudo rm -rf ./ps-packager'
+            }
+        }
+        stage('Get Sources') {
+            steps {
+                cleanWs()
+                checkout scm: [$class: 'GitSCM', extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'nusim']], userRemoteConfigs: [[credentialsId: 'GitHub Sugar User', url: 'https://github.com/nbleyh-sugarcrm/ps-packager']]]
+            }
+        }
+        stage('Generate Sugar Package') {
+          steps {
+            sh '''
+              cd ps-packager
+              python3 src/packager.py -t ${TARGET_BRANCH} -b ${BASE_BRANCH} -r ${GIT_REPO} -v ${SUGAR_VERSION} -a "${PACKAGE_NAME}" -u {BUILD_NUMBER} -d "${MANIFEST_DESCRIPTION}"
+            '''
+            archiveArtifacts artifacts: 'ps-packager/*.zip', onlyIfSuccessful: true
+        }
+     }
+ }
+}        
