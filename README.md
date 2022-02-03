@@ -11,6 +11,10 @@ Paramters:
 - Package Description (-d)
 - Package Version (-u)
 
+Example command: 
+python3 src/packager.py -t zhinst_1120_phase1_S27 -b zhinst_1120_phase1_S26 -r git@github.com:sugarcrm-ps/ps-dev-zhinst.git -u "1.0" -a "ZHINST Phase 1 S27"
+
+
 
 Pre-requisitesto use in Jenkins:
 - Credentials for GitHub user which has access rights to sugarcrm repositories need to be configured in Jenkins as Username/Password Credentials with ID "GitHub Sugar User"
