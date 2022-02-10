@@ -5,6 +5,7 @@ from shutil import ignore_patterns
 import argparse
 import manifest
 import time
+import glob
 
 # Command: python3 src/packager.py -t zhinst_1120_phase1_S27 -b zhinst_1120_phase1_S26 -r git@github.com:sugarcrm-ps/ps-dev-zhinst.git -u "1.0" -a "ZHINST Phase 1 S27"
 
@@ -107,6 +108,9 @@ class Packager():
             shutil.rmtree(self.packagePath)
         if (path.exists(self.deltaPath)):
             shutil.rmtree(self.deltaPath)
+        for f in os.listdir(os.getcwd()):
+            if f.endswith(".zip"):
+                os.remove(os.path.join(os.getcwd(), f))
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--version", default="11.2" , help = "Sugar Version")
