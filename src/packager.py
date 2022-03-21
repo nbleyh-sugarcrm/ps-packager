@@ -6,8 +6,10 @@ import argparse
 import manifest
 import time
 import glob
+import subprocess
+from pathlib import Path
 
-# Command: python3 src/packager.py -t zhinst_1120_phase1_S27 -b zhinst_1120_phase1_S26 -r git@github.com:sugarcrm-ps/ps-dev-zhinst.git -u "1.0" -a "ZHINST Phase 1 S27"
+# Command: python3 src/packager.py -t zhinst_1120_phase1_S28 -b zhinst_1120_phase1_S27 -r git@github.com:sugarcrm-ps/ps-dev-zhinst.git -u "1.0" -a "ZHINST Phase 1 S27"
 
 class Packager():
 
@@ -16,7 +18,7 @@ class Packager():
         self.repoPath = cwd+"/repo"
         self.deltaPath=cwd+"/delta"
         self.packagePath = cwd+"/package"
-        self.removeLegacyFilesScript = cwd+"/removeLegacyFiles.php"
+        self.removeLegacyFilesScript = cwd+"/src/removeLegacyFiles.php"
         self.deleteFiles = False
         self.man = manifest.Manifest()
 
@@ -52,13 +54,16 @@ class Packager():
         print("3. Perform delta...")
         self.performDelta()
 
-        print("4. Copy files...")
+        print("4. Check deleted files...")
+        self.processDeletedFiles()
+
+        print("5. Copy files...")
         self.copyFiles()
 
-        print("5. Create manifest...")
+        print("6. Create manifest...")
         self.man.createManifest(self.packagePath)
 
-        print("6. Zip package...")
+        print("7. Zip package...")
         shutil.make_archive(self.packagePath+"/../"+time.strftime("%Y%m%d")+"_"+self.name.replace(" ", "_"), 'zip', self.packagePath)
 
     def performGitCheckout(self):
@@ -73,11 +78,16 @@ class Packager():
             os.mkdir(self.packagePath)
         os.chdir(self.repoPath)
         os.system("rsync -R $(git diff --diff-filter=ACMR "+self.base+" "+self.target+" --name-only) "+self.deltaPath)
-        os.system("git diff "+self.base+"..."+self.target+" --name-only --diff-filter=D | cut -c10-99 | > "+self.packagePath+"/delete.txt")
+
+    def processDeletedFiles(self):
         # Are there files to be deleted
-        count = len(open(self.packagePath+"/delete.txt").readlines(  ))
-        if (count > 0):
+        os.chdir(self.repoPath)
+        proc = subprocess.Popen(["git diff "+self.base+"..."+self.target+" --name-only --diff-filter=D | cut -c10-199"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+        deleteFile = open(self.packagePath+"/delete.txt", 'a')
+        for line in proc.stdout:
+            deleteFile.write(line)
             self.deleteFiles = True
+        proc.wait()
 
     def copyFiles(self):
         # Application files
@@ -86,7 +96,7 @@ class Packager():
         postScriptsPathSource = self.deltaPath+"/customer/upgrade/"+self.target+"/scripts/php/post/"
         preScriptsPathSource = self.deltaPath+"/customer/upgrade/"+self.target+"/scripts/php/pre/"
         postScriptsPathTarget = self.packagePath+"/scripts/post/"
-        preScriptsPathTarget = self.packagePath+"/scripts/pre"
+        preScriptsPathTarget = self.packagePath+"/scripts/pre/"
         if (path.exists(postScriptsPathSource)):
             shutil.copytree(postScriptsPathSource, postScriptsPathTarget, ignore=ignore_patterns('.*'))
         else :
@@ -97,9 +107,9 @@ class Packager():
             print("No pre script files found")
         # removeLegacyFiles script
         if (self.deleteFiles):
-            if (not path.exists(preScriptsPathTarget)):
-                os.mkdir(preScriptsPathTarget)
-            shutil.copyfile(self.removeLegacyFilesScript, preScriptsPathTarget, ignore=ignore_patterns('.*'))
+            preScripts = Path(preScriptsPathTarget)
+            preScripts.mkdir(parents=True, exist_ok=True)
+            shutil.copy(self.removeLegacyFilesScript, preScriptsPathTarget)
 
     def cleanup(self):
         if (path.exists(self.repoPath)):
