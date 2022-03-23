@@ -77,12 +77,12 @@ class Packager():
         if (not path.exists(self.packagePath)):
             os.mkdir(self.packagePath)
         os.chdir(self.repoPath)
-        os.system("rsync -R $(git diff --diff-filter=ACMR "+self.base+" "+self.target+" --name-only) "+self.deltaPath)
+        os.system("rsync -R $(git diff --diff-filter=ACMR "+self.base+".."+self.target+" --name-only) "+self.deltaPath)
 
     def processDeletedFiles(self):
         # Are there files to be deleted
         os.chdir(self.repoPath)
-        proc = subprocess.Popen(["git diff "+self.base+"..."+self.target+" --name-only --diff-filter=D | cut -c10-199"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+        proc = subprocess.Popen(["git diff "+self.base+".."+self.target+" --name-only --diff-filter=D | cut -c10-199"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
         deleteFile = open(self.packagePath+"/delete.txt", 'a')
         for line in proc.stdout:
             deleteFile.write(line)
