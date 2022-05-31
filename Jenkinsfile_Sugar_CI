@@ -1,0 +1,68 @@
+/*
+Pre-requisites:
+- Credentials for GitHub user which has access rights to sugarcrm repositories need to be configured in Jenkins as Username/Password Credentials with ID "GitHub Sugar User"
+- GitHub Token for user which has access rights to sugarcrm repositories need to be configured in Jenkins as Secret Text with ID "GitHub Token"
+- Text Finder plugin needs to be installed on Jenkins
+- Git needs to be installed on Jenkins Worker
+- Pyhton 3 needs to installed on Jenkins worker
+- Rsync needs to be installed on Jenkins worker
+- boto3 needs to be installed on Jenkins worker
+*/
+
+pipeline {
+    agent any
+    parameters {
+        string(name: 'BASE_BRANCH', defaultValue: '11_3_base', description: 'Branch containing the base code')
+        string(name: 'TARGET_BRANCH', defaultValue: 'attb_113_phase1', description: 'Branch containing the target code')
+        string(name: 'GIT_REPO', defaultValue: 'git@github.com:sugarcrm-ps/ps-dev-attb', description: 'Git repository of the Project')
+        string(name: 'SUGAR_VERSION', defaultValue: '11.*', description: 'Sugar version')
+        string(name: 'MANIFEST_DESCRIPTION', defaultValue: 'Generated Sugar Package', description: 'Description of the Sugar Package')
+        string(name: 'PACKAGE_NAME', defaultValue: 'Package', description: 'Name of the Sugar Package')
+        string(name: 'BACKUP_NAME', defaultValue: 'cht-dev.sugaropencloud.tar.gz', description: 'Name of the backup file')
+        string(name: 'INSTANCE_NAME', defaultValue: 'sugar1130ent', description: 'Name of the instance folder in the backup')
+        string(name: 'SQL_FILE', defaultValue: 'sugar1130ent.sql', description: 'Name of the sql file in the backup')
+        string(name: 'SILENT_ZIP', defaultValue: 'https://honeycomb.sugarcrm.io/download/release/12.0.0/265/silentUpgrade-PRO-12.0.0.zip', description: 'URL of the Silent Upgrader zip')
+        string(name: 'UPGRADE_ZIP', defaultValue: 'https://honeycomb.sugarcrm.io/download/release/12.0.0/265/silentUpgrade-PRO-12.0.0.zip', description: 'URL of the Upgrade Package zip')
+
+     stages {
+        stage('Get Sources') {
+            steps {
+                cleanWs()
+                git branch: 'CI', credentialsId: 'GitHub Sugar User', url: 'https://github.com/nbleyh-sugarcrm/ps-packager'
+            }
+        }
+        stage('Setup Sugar Instance') {
+          steps {
+            sh '''
+              python3 src/builder.py -b ${BACKUP_NAME} -i ${INSTANCE_NAME} -s ${SQL_FILE}
+            '''
+            }
+        }
+        stage('Perform Healthcheck') {
+            steps {
+                sh '''
+                    python3 src/tester.py -u ${SILENT_ZIP} -p ${UPGRADE_ZIP}
+                '''
+                findText {
+                    textFinders {
+                        textFinder {
+                            regexp 'yellow'
+                            fileSet 'data/upgrader/health.log'
+                            changeCondition 'MATCH_FOUND'
+                            alsoCheckConsoleOutput false
+                            buildResult 'UNSTABLE'
+                        }
+                        textFinder {
+                            regexp 'red'
+                            fileSet 'data/upgrader/health.log'
+                            changeCondition 'MATCH_FOUND'
+                            alsoCheckConsoleOutput false
+                            buildResult 'FAILURE'
+                        }
+                      }
+                }
+                archiveArtifacts artifacts: 'data/upgrader/health.log', onlyIfSuccessful: false
+            }
+        }
+    }
+}        
