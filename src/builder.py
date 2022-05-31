@@ -9,8 +9,7 @@ import boto3
 import datetime
 
 # Command: python3 src/builder.py -b cht-dev.sugaropencloud.tar.gz
-# Access Key ID:AKIAV7LTTQCWDYCYSRXQ
-# Secret Access Key: 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
+
 
 # wget https://bootstrap.pypa.io/get-pip.py
 # python3 get-pip.py
@@ -62,8 +61,8 @@ class Builder():
     def downloadBackup(self):
         client = boto3.client(
             's3',
-            aws_access_key_id = 'AKIAV7LTTQCWDYCYSRXQ',
-            aws_secret_access_key = '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',
+            aws_access_key_id = '',
+            aws_secret_access_key = '',
             region_name = 'eu-central-1'
         )
         client.download_file('sugar-ps-backups', self.backupName, self.dataPath+"/"+self.backupName)
