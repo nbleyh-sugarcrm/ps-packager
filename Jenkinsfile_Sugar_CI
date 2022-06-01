@@ -24,7 +24,7 @@ pipeline {
         string(name: 'SQL_FILE', defaultValue: 'sugar1130ent.sql', description: 'Name of the sql file in the backup')
         string(name: 'SILENT_ZIP', defaultValue: 'https://honeycomb.sugarcrm.io/download/release/12.0.0/265/silentUpgrade-PRO-12.0.0.zip', description: 'URL of the Silent Upgrader zip')
         string(name: 'UPGRADE_ZIP', defaultValue: 'https://honeycomb.sugarcrm.io/download/release/12.0.0/265/silentUpgrade-PRO-12.0.0.zip', description: 'URL of the Upgrade Package zip')
-
+    }
      stages {
         stage('Get Sources') {
             steps {

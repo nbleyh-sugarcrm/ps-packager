@@ -8,7 +8,7 @@ import subprocess
 import boto3
 import datetime
 
-# Command: python3 src/builder.py -b cht-dev.sugaropencloud.tar.gz -a AKIAV7LTTQCWFWZJWGYT -p AOre/VkL5QrFj6dnnvFycxJpJMGOuQ6cZLkemzJy
+# Command: python3 src/builder.py -b cht-dev.sugaropencloud.tar.gz
 
 # Sets up a Sugar instance based on a backup
 class Builder():
