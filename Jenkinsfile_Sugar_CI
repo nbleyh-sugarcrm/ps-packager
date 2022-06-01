@@ -2,7 +2,7 @@
 Pre-requisites:
 - Credentials for GitHub user which has access rights to sugarcrm repositories need to be configured in Jenkins as Username/Password Credentials with ID "GitHub Sugar User"
 - GitHub Token for user which has access rights to sugarcrm repositories need to be configured in Jenkins as Secret Text with ID "GitHub Token"
-- AWS Credentials need to be configured to access S3 where Sugar backups are stored ID "AWS User"-
+- AWS Credentials need to be configured to access S3 where Sugar backups are stored ID "AWS User"
 - Text Finder plugin needs to be installed on Jenkins
 - AWS Steps plugin needs to be installed on Jenkins
 - Git needs to be installed on Jenkins Worker
