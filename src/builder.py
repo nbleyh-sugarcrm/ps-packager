@@ -8,13 +8,7 @@ import subprocess
 import boto3
 import datetime
 
-# Command: python3 src/builder.py -b cht-dev.sugaropencloud.tar.gz
-# Access Key ID:AKIAV7LTTQCWDYCYSRXQ
-# Secret Access Key: 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
-
-# wget https://bootstrap.pypa.io/get-pip.py
-# python3 get-pip.py
-# pip install boto3
+# Command: python3 src/builder.py -b cht-dev.sugaropencloud.tar.gz -a AKIAV7LTTQCWFWZJWGYT -p AOre/VkL5QrFj6dnnvFycxJpJMGOuQ6cZLkemzJy
 
 # Sets up a Sugar instance based on a backup
 class Builder():
@@ -34,24 +28,21 @@ class Builder():
 
     def setupInstance(self):
         print("1. Cleanup...")
-        #self.cleanup()
+        self.cleanup()
 
-        print("2. Download backup...")
-        #self.downloadBackup()
+        print("2. Unzip backup...")
+        self.extractBackup()
 
-        print("3. Unzip backup...")
-        #self.extractBackup()
-
-        print("4. Setup Sugar environment")
+        print("3. Setup Sugar environment")
         os.system("docker-compose -f src/sugar12_stack.yml up -d")
         # Wait until containers are running
         time.sleep(60)
 
-        print("5. Import database...")
-        #self.importDatabase()
+        print("4. Import database...")
+        self.importDatabase()
 
-        print("6. Configure instance...")
-        #self.configureInstance()
+        print("5. Configure instance...")
+        self.configureInstance()
 
     def cleanup(self):
         os.system("docker-compose -f src/sugar12_stack.yml down")
@@ -59,17 +50,8 @@ class Builder():
             shutil.rmtree(self.dataPath)
         os.mkdir(self.dataPath)
 
-    def downloadBackup(self):
-        client = boto3.client(
-            's3',
-            aws_access_key_id = 'AKIAV7LTTQCWDYCYSRXQ',
-            aws_secret_access_key = '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',
-            region_name = 'eu-central-1'
-        )
-        client.download_file('sugar-ps-backups', self.backupName, self.dataPath+"/"+self.backupName)
-
     def extractBackup(self):
-        tar = tarfile.open(self.dataPath+self.backupName, "r:gz")
+        tar = tarfile.open(os.getcwd()+self.backupName, "r:gz")
         members = []
         for member in tar.getmembers():
             if self.instanceFolderName in member.path and not member.name.endswith("sql") :
