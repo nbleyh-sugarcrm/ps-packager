@@ -50,17 +50,17 @@ pipeline {
                 findText {
                     textFinders {
                         textFinder {
-                            regexp 'yellow'
-                            fileSet 'data/upgrader/health.log'
-                            changeCondition 'MATCH_FOUND'
-                            alsoCheckConsoleOutput false
+                            regexp 'yellow',
+                            fileSet 'data/upgrader/health.log',
+                            changeCondition 'MATCH_FOUND',
+                            alsoCheckConsoleOutput false,
                             buildResult 'UNSTABLE'
                         }
                         textFinder {
-                            regexp 'red'
-                            fileSet 'data/upgrader/health.log'
-                            changeCondition 'MATCH_FOUND'
-                            alsoCheckConsoleOutput false
+                            regexp 'red',
+                            fileSet 'data/upgrader/health.log',
+                            changeCondition 'MATCH_FOUND',
+                            alsoCheckConsoleOutput false,
                             buildResult 'FAILURE'
                         }
                       }
