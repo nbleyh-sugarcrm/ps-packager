@@ -39,6 +39,7 @@ services:
   mysql:
     container_name: "sugar-mysql"
     image: sugar_mysql57
+    command: [--ignore-db-dir=lost+found]
     build: images/mysql/57
     ports:
       - "3306:3306"
