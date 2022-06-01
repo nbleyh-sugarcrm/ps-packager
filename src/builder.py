@@ -50,7 +50,8 @@ class Builder():
         os.mkdir(self.dataPath)
 
     def extractBackup(self):
-        tar = tarfile.open(os.getcwd()+"/"+self.backupName, "r:gz")
+        # workaround, as Jenkins S3 plugin downloads the file into a folder with the same name
+        tar = tarfile.open(os.getcwd()+"/"+self.backupName+"/"+self.backupName, "r:gz")
         members = []
         for member in tar.getmembers():
             if self.instanceFolderName in member.path and not member.name.endswith("sql") :
