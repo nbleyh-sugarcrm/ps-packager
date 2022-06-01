@@ -32,16 +32,16 @@ class Builder():
         print("2. Unzip backup...")
         self.extractBackup()
 
-        print("3. Setup Sugar environment")
+        print("3. Configure instance...")
+        self.configureInstance()
+
+        print("4. Setup Sugar environment")
         os.system("docker-compose -f src/sugar12_stack.yml up -d")
         # Wait until containers are running
         time.sleep(60)
 
-        print("4. Import database...")
+        print("5. Import database...")
         self.importDatabase()
-
-        print("5. Configure instance...")
-        self.configureInstance()
 
     def cleanup(self):
         os.system("docker-compose -f src/sugar12_stack.yml down")
