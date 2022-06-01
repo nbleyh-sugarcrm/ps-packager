@@ -5,7 +5,6 @@ import argparse
 import time
 import shutil
 import subprocess
-import boto3
 import datetime
 
 # Command: python3 src/builder.py -b cht-dev.sugaropencloud.tar.gz
