@@ -35,7 +35,7 @@ pipeline {
         stage('Setup Sugar Instance') {
           steps {
             withAWS(region:'eu-central-1',credentials:'AWS User') {
-                s3Download(file: "${BACKUP_NAME}", bucket: 'sugar-ps-backups', path: '')
+                s3Download(file: "${BACKUP_NAME}", bucket: 'sugar-ps-backups')
             }
             sh '''
               python3 src/builder.py -b ${BACKUP_NAME} -i ${INSTANCE_NAME} -s ${SQL_FILE}
