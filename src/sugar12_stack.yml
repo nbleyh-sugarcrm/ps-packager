@@ -55,7 +55,7 @@ services:
       - 9200:9200
       - 9300:9300
     volumes:
-      - ../data/elasticsearch:/usr/share/elasticsearch/data
+      - ../elasticsearch:/usr/share/elasticsearch/data
     environment:
       - node.name=sugar1
       - cluster.name=sugarcrm79
@@ -72,7 +72,7 @@ services:
     container_name: "sugar-redis"
     image: redis:latest
     volumes:
-      - ../data/redis:/data
+      - ../redis:/data
   permissions:
     container_name: "sugar-permissions"
     image: esimonetti/sugardockerized:permissions-1.19
