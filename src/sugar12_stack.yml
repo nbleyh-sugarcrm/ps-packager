@@ -39,12 +39,11 @@ services:
   mysql:
     container_name: "sugar-mysql"
     image: sugar_mysql57
-    command: [--ignore-db-dir=lost+found]
     build: images/mysql/57
     ports:
       - "3306:3306"
     volumes:
-      - ../data/mysql/57:/var/lib/mysql
+      - ../mysql/57:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_USER=sugar

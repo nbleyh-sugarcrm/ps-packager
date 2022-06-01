@@ -15,6 +15,7 @@ class Builder():
     def __init__(self):
         cwd = os.getcwd()
         self.dataPath = cwd+"/data/"
+        self.dbPath = cwd+"/mysql/"
 
     def setBackupName(self, backupName):
         self.backupName = backupName
@@ -44,9 +45,11 @@ class Builder():
         self.importDatabase()
 
     def cleanup(self):
-        os.system("docker-compose -f src/sugar12_stack.yml down")
+        os.system("docker-compose -f src/sugar12_stack.yml down --remove-orphans")
         if (path.exists(self.dataPath)):
             shutil.rmtree(self.dataPath)
+        if (path.exists(self.dbPath)):
+            shutil.rmtree(self.dbPath)
         os.mkdir(self.dataPath)
 
     def extractBackup(self):
