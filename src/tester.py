@@ -26,9 +26,9 @@ class Tester():
     def runHealthcheck(self):
         upgraderFile = self.silentUpgrader.split("/")[-1]
         packageFile = self.upgradePackage.split("/")[-1]
-        os.system("wget -P "+self.dataPath+" "+self.silentUpgrader)
-        os.system("unzip "+self.dataPath+"/"+upgraderFile+" -d "+self.dataPath+"/upgrader")
-        os.system("wget -P "+self.dataPath+" "+self.upgradePackage)
+        os.system("sudo wget -P "+self.dataPath+" "+self.silentUpgrader)
+        os.system("sudo unzip "+self.dataPath+"/"+upgraderFile+" -d "+self.dataPath+"/upgrader")
+        os.system("sudo wget -P "+self.dataPath+" "+self.upgradePackage)
         os.system("docker exec "+self.dockerContainer+" php /var/www/html/upgrader/CliUpgrader.php -z /var/www/html/"+packageFile+" -l /var/www/html/upgrader/health.log -s /var/www/html/sugar/ -u admin -S healthcheck")
 
 parser = argparse.ArgumentParser()
