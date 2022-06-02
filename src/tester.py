@@ -53,7 +53,7 @@ class Tester():
         testsFile = self.phpUnitTests.split("/")[-1]
         os.system("sudo wget -P "+self.dataPath+" "+self.phpUnitTests)
         os.system("sudo unzip -o "+self.dataPath+"/"+testsFile+" -d data/sugar")
-        os.system("docker exec -it sugar-web1 /bin/sh -c 'composer install && cd tests/unit-php && ../../vendor/bin/phpunit --log-junit results.xml'")
+        os.system("docker exec sugar-web1 /bin/sh -c 'composer install && cd tests/unit-php && ../../vendor/bin/phpunit --log-junit results.xml'")
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-u", "--upgrader",  required=True , help = "URL of the Silent Upgrader zip")
