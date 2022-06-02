@@ -31,14 +31,13 @@ class Tester():
         self.dockerContainer = dockerContainer
 
     def run(self, mode):
-        match mode:
-            case "health":
-                self.runHealthcheck()
-            case "unit":
-                self.runPHPUnitTests()
-            case _:
-                self.runHealthcheck()
-                self.runPHPUnitTests()
+        if (mode == "health"):
+            self.runHealthcheck()
+        elif(mode == "unit"):
+            self.runPHPUnitTests()
+        else:
+            self.runHealthcheck()
+            self.runPHPUnitTests()
 
     def runHealthcheck(self):
         print("Run Healthcheck...")
