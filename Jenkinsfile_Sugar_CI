@@ -24,6 +24,7 @@ pipeline {
         string(name: 'SQL_FILE', defaultValue: 'sugar1130ent.sql', description: 'Name of the sql file in the backup')
         string(name: 'SILENT_ZIP', defaultValue: 'https://honeycomb.sugarcrm.io/download/release/12.0.0/265/silentUpgrade-PRO-12.0.0.zip', description: 'URL of the Silent Upgrader zip')
         string(name: 'UPGRADE_ZIP', defaultValue: 'https://honeycomb.sugarcrm.io/download/release/12.0.0/265/SugarEnt-Upgrade-11.3.0-to-12.0.0.zip', description: 'URL of the Upgrade Package zip')
+        string(name: 'UNITTEST_ZIP', defaultValue: 'https://honeycomb.sugarcrm.io/download/release/11.3.0/236/SugarEnt-11.3.0-tests.zip', description: 'URL of the PHPUnit Tests zip')
     }
      stages {
         stage('Get Sources') {
@@ -42,10 +43,18 @@ pipeline {
             '''
             }
         }
+        stage('Perform PHPUnit Tests') {
+            steps {
+                sh '''
+                    python3 src/tester.py -m unit -u ${SILENT_ZIP} -p ${UPGRADE_ZIP} -t ${UNITTEST_ZIP}
+                '''
+                junit 'data/sugar/results.xml'
+            }
+        }
         stage('Perform Healthcheck') {
             steps {
                 sh '''
-                    python3 src/tester.py -u ${SILENT_ZIP} -p ${UPGRADE_ZIP}
+                    python3 src/tester.py -m health -u ${SILENT_ZIP} -p ${UPGRADE_ZIP} -t ${UNITTEST_ZIP}
                 '''
                 findText(
                     textFinders: [
