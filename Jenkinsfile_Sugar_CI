@@ -34,9 +34,6 @@ pipeline {
         }
         stage('Setup Sugar Instance') {
           steps {
-            withAWS(region:'eu-central-1',credentials:'AWS User') {
-                s3Download(file: "${BACKUP_NAME}", bucket: 'sugar-ps-backups', force: true)
-            }
             withCredentials([usernamePassword(credentialsId: 'PS FTP User', passwordVariable: 'pass', usernameVariable: 'user')]) {
                 sh '''
                     python3 src/builder.py -b ${BACKUP_NAME} -u ${user} -p ${pass}
