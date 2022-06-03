@@ -44,7 +44,7 @@ pipeline {
         stage('Perform PHPUnit Tests') {
             steps {
                 sh '''
-                    docker exec sugar-web1 /bin/sh -c 'composer install && cd tests/unit-php && ../../vendor/bin/phpunit --log-junit results.xml'")
+                    docker exec sugar-web1 /bin/sh -c 'composer install && cd tests/unit-php && ../../vendor/bin/phpunit --log-junit results.xml'
                 '''
                 junit 'data/sugar/results.xml'
             }
