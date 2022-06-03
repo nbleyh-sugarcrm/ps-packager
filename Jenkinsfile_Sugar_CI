@@ -36,7 +36,7 @@ pipeline {
           steps {
             withCredentials([usernamePassword(credentialsId: 'PS FTP User', passwordVariable: 'pass', usernameVariable: 'user')]) {
                 sh '''
-                    python3 src/builder.py -b ${BACKUP_NAME} -u ${user} -p ${pass}
+                    python3 src/builder.py -b ${BACKUP_NAME} -u $user -p $pass
                 '''
             }
           }
