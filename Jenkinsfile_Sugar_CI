@@ -2,9 +2,8 @@
 Pre-requisites:
 - Credentials for GitHub user which has access rights to sugarcrm repositories need to be configured in Jenkins as Username/Password Credentials with ID "GitHub Sugar User"
 - GitHub Token for user which has access rights to sugarcrm repositories need to be configured in Jenkins as Secret Text with ID "GitHub Token"
-- AWS Credentials need to be configured to access S3 where Sugar backups are stored ID "AWS User"
+- Credentials for Sugar FTP Server need to be configured with ID "PS FTP User"
 - Text Finder plugin needs to be installed on Jenkins
-- AWS Steps plugin needs to be installed on Jenkins
 - Git needs to be installed on Jenkins Worker
 - Pyhton 3 needs to installed on Jenkins worker
 - Rsync needs to be installed on Jenkins worker
@@ -20,14 +19,14 @@ pipeline {
         string(name: 'MANIFEST_DESCRIPTION', defaultValue: 'Generated Sugar Package', description: 'Description of the Sugar Package')
         string(name: 'PACKAGE_NAME', defaultValue: 'Package', description: 'Name of the Sugar Package')
         string(name: 'BACKUP_NAME', defaultValue: 'cht-dev.sugaropencloud.tar.gz', description: 'Name of the backup file')
-        string(name: 'INSTANCE_NAME', defaultValue: 'sugar1130ent', description: 'Name of the instance folder in the backup')
-        string(name: 'SQL_FILE', defaultValue: 'sugar1130ent.sql', description: 'Name of the sql file in the backup')
-        string(name: 'SILENT_ZIP', defaultValue: 'https://honeycomb.sugarcrm.io/download/release/12.0.0/265/silentUpgrade-PRO-12.0.0.zip', description: 'URL of the Silent Upgrader zip')
-        string(name: 'UPGRADE_ZIP', defaultValue: 'https://honeycomb.sugarcrm.io/download/release/12.0.0/265/SugarEnt-Upgrade-11.3.0-to-12.0.0.zip', description: 'URL of the Upgrade Package zip')
-        string(name: 'UNITTEST_ZIP', defaultValue: 'https://honeycomb.sugarcrm.io/download/release/11.3.0/236/SugarEnt-11.3.0-tests.zip', description: 'URL of the PHPUnit Tests zip')
+        choice(name: 'BACKUP_VERSION', choices: ['1130', '1200'],  defaultValue: '1130', description: 'Sugar Version of the backup')
+    }
+    options {
+        // This is required if you want to clean before build
+        skipDefaultCheckout(true)
     }
      stages {
-        stage('Get Sources') {
+        stage('Checkout') {
             steps {
                 cleanWs()
                 git branch: 'CI', credentialsId: 'GitHub Sugar User', url: 'https://github.com/nbleyh-sugarcrm/ps-packager'
@@ -38,15 +37,17 @@ pipeline {
             withAWS(region:'eu-central-1',credentials:'AWS User') {
                 s3Download(file: "${BACKUP_NAME}", bucket: 'sugar-ps-backups', force: true)
             }
-            sh '''
-              python3 src/builder.py -b ${BACKUP_NAME} -i ${INSTANCE_NAME} -s ${SQL_FILE}
-            '''
+            withCredentials([usernamePassword(credentialsId: 'PS FTP User', passwordVariable: 'pass', usernameVariable: 'user')]) {
+                sh '''
+                    python3 src/builder.py -b ${BACKUP_NAME} -u ${user} -p ${pass}
+                '''
             }
+          }
         }
         stage('Perform PHPUnit Tests') {
             steps {
                 sh '''
-                    python3 src/tester.py -m unit -u ${SILENT_ZIP} -p ${UPGRADE_ZIP} -t ${UNITTEST_ZIP}
+                    docker exec sugar-web1 /bin/sh -c 'composer install && cd tests/unit-php && ../../vendor/bin/phpunit --log-junit results.xml'")
                 '''
                 junit 'data/sugar/results.xml'
             }
@@ -54,7 +55,7 @@ pipeline {
         stage('Perform Healthcheck') {
             steps {
                 sh '''
-                    python3 src/tester.py -m health -u ${SILENT_ZIP} -p ${UPGRADE_ZIP} -t ${UNITTEST_ZIP}
+                    os.system("docker exec sugar-web1 php /var/www/html/upgrader/CliUpgrader.php -z /var/www/html/upgrade.zip -l /var/www/html/upgrader/health.log -s /var/www/html/sugar/ -u admin -S healthcheck")
                 '''
                 findText(
                     textFinders: [
