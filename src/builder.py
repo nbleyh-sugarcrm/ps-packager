@@ -111,7 +111,7 @@ class Builder():
 parser = argparse.ArgumentParser()
 parser.add_argument("-b", "--backup",  required=True , help = "Name of the backup file")
 parser.add_argument("-v", "--version", default="1130" , help = "The Sugar Version")
-parser.add_argument("-p", "--ftppdwd", required=True , help = "Password to access the FTP server to download the backup")
+parser.add_argument("-p", "--ftppwd", required=True , help = "Password to access the FTP server to download the backup")
 parser.add_argument("-u", "--ftpuser", required=True , help = "User to access the FTP server to download the backup")
 args = parser.parse_args()
 
