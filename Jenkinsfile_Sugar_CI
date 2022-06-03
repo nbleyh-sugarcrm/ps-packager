@@ -19,7 +19,7 @@ pipeline {
         string(name: 'MANIFEST_DESCRIPTION', defaultValue: 'Generated Sugar Package', description: 'Description of the Sugar Package')
         string(name: 'PACKAGE_NAME', defaultValue: 'Package', description: 'Name of the Sugar Package')
         string(name: 'BACKUP_NAME', defaultValue: 'cht-dev.sugaropencloud.tar.gz', description: 'Name of the backup file')
-        choice(name: 'BACKUP_VERSION', choices: ['1130', '1200'],  defaultValue: '1130', description: 'Sugar Version of the backup')
+        choice(name: 'BACKUP_VERSION', choices: ['1130', '1200'],  description: 'Sugar Version of the backup')
     }
     options {
         // This is required if you want to clean before build
