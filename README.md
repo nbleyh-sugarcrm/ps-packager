@@ -6,7 +6,7 @@ Paramters:
 - Sugar Version (-v)
 - Base branch in GitHub (-b)
 - Target branch in GitHub (-t)
-- GitHub Repository, to be provided in the from git@github.com:repository.git (-r)
+- GitHub Repository, to be provided in the form git@github.com:repository.git (-r)
 - Package Name (-a)
 - Package Description (-d)
 - Package Version (-u)
