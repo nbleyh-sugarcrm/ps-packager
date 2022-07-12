@@ -39,7 +39,7 @@ class Installer():
         header = {"oauth-token" : token}
         files = {"upgrade_zip": open(self.package,'rb')}
         uploadResponse = requests.post(url = self.sugarPackagesURL, headers=header, files=files)
-        if (uploadResponse.json()["error"]=="upload_package_error"):
+        if (uploadResponse.json()get("error")=="upload_package_error"):
             print("Package could not be uploaded")
             print(uploadResponse.json())
         # 3. Install package
