@@ -31,7 +31,8 @@ class SugarVersion():
         if (self.version == '1130'):
             return "https://honeycomb.sugarcrm.io/download/release/11.3.0/236/SugarEnt-11.3.0-tests.zip"
         if (self.version == '1200'):
-            return "https://honeycomb.sugarcrm.io/download/train/12.1.0/134/SugarEnt-12.0.0-tests.zip"
+            return "https://honeycomb.sugarcrm.io/download/release/12.0.0/265/SugarUlt-12.0.0-tests.zip"
+
         else:
             print(self.version+" is not a supported Sugar Version!")
 
