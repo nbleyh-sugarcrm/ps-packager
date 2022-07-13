@@ -24,7 +24,7 @@ pipeline {
         string(name: 'POST_FOLDER', defaultValue: '', description: 'Folder of the Post scripts. When left empty, default location will be used.')
         string(name: 'PRE_FOLDER', defaultValue: '', description: 'Folder of the Pre scripts. When left empty, default location will be used.')
         string(name: 'BACKUP_NAME', defaultValue: 'cht-dev.sugaropencloud.tar.gz', description: 'Name of the backup file')
-        choice(name: 'BACKUP_VERSION', choices: ['1130', '1200'],  description: 'Sugar Version of the backup')
+        choice(name: 'BACKUP_VERSION', choices: ['1200', '1130'],  description: 'Sugar Version of the backup')
     }
     options {
         // This is required if you want to clean before build
@@ -48,14 +48,16 @@ pipeline {
         }
         stage('Generate Sugar Package') {
             steps {
-                if (env.POST_FOLDER == '') {
-                    sh '''
-                        python3 src/packager.py -t ${TARGET_BRANCH} -b ${BASE_BRANCH} -r ${GIT_REPO} -v ${SUGAR_VERSION} -a "${PACKAGE_NAME}" -u ${BUILD_NUMBER} -d "${MANIFEST_DESCRIPTION}"
-                    '''
-                } else {
-                    sh '''
-                        python3 src/packager.py -t ${TARGET_BRANCH} -b ${BASE_BRANCH} -r ${GIT_REPO} -v ${SUGAR_VERSION} -a "${PACKAGE_NAME}" -u ${BUILD_NUMBER} -d "${MANIFEST_DESCRIPTION}" -o ${POST_FOLDER}
-                    '''
+                script {
+                    if (env.POST_FOLDER == '') {
+                        sh '''
+                            python3 src/packager.py -t ${TARGET_BRANCH} -b ${BASE_BRANCH} -r ${GIT_REPO} -v ${SUGAR_VERSION} -a "${PACKAGE_NAME}" -u ${BUILD_NUMBER} -d "${MANIFEST_DESCRIPTION}"
+                        '''
+                    } else {
+                        sh '''
+                            python3 src/packager.py -t ${TARGET_BRANCH} -b ${BASE_BRANCH} -r ${GIT_REPO} -v ${SUGAR_VERSION} -a "${PACKAGE_NAME}" -u ${BUILD_NUMBER} -d "${MANIFEST_DESCRIPTION}" -o ${POST_FOLDER}
+                        '''
+                    }
                 }
                 archiveArtifacts artifacts: '*.zip', onlyIfSuccessful: true
             }
