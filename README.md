@@ -20,7 +20,7 @@ Pre-requisites to use in Jenkins:
 - Credentials for GitHub user which has access rights to sugarcrm repositories need to be configured in Jenkins as Username/Password Credentials with ID "GitHub Sugar User"
 - GitHub Token for user which has access rights to sugarcrm repositories need to be configured in Jenkins as Secret Text with ID "GitHub Token"
 - Git repository needs to be provided in the form git@github.com:repository.git
-- Scripts need to be provided in the following folders: customer/upgrade/<Target branch name>/scripts/php/post and customer/upgrade/<Target branch name>/scripts/php/pre
+- Scripts need to be provided in the following folders: customer/upgrade/Target branch name/scripts/php/post and customer/upgrade/Target branch name/scripts/php/pre
 - Git needs to be installed on Jenkins Worker
 - Pyhton 3 needs to installed on Jenkins worker
 - Rsync needs to be installed on Jenkins worker
