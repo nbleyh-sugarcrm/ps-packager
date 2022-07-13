@@ -44,6 +44,18 @@ class Packager():
     def setDescription(self, description):
         self.man.setDescription(description)
 
+    def setPreScriptsPath(self, preScriptsPath):
+        if (preScriptsPath == ""):
+            self.preScriptsPathSource = self.deltaPath+"/customer/upgrade/"+self.target+"/scripts/php/pre/"
+        else :
+            self.preScriptsPathSource = self.deltaPath+"/"+preScriptPath
+
+    def setPostScriptsPath(self, postScriptsPath):
+        if (postScriptsPath == ""):
+            self.postScriptsPathSource = self.deltaPath+"/customer/upgrade/"+self.target+"/scripts/php/post/"
+        else :
+            self.postScriptsPathSource = self.deltaPath+"/"+postScriptsPath
+
     def createPackage(self):
         print("1. Cleanup...")
         self.cleanup()
@@ -93,16 +105,14 @@ class Packager():
         # Application files
         shutil.copytree(self.deltaPath+"/sugarcrm", self.packagePath+"/files")
         # Script files
-        postScriptsPathSource = self.deltaPath+"/customer/upgrade/"+self.target+"/scripts/php/post/"
-        preScriptsPathSource = self.deltaPath+"/customer/upgrade/"+self.target+"/scripts/php/pre/"
         postScriptsPathTarget = self.packagePath+"/scripts/post/"
         preScriptsPathTarget = self.packagePath+"/scripts/pre/"
-        if (path.exists(postScriptsPathSource)):
-            shutil.copytree(postScriptsPathSource, postScriptsPathTarget, ignore=ignore_patterns('.*'))
+        if (path.exists(self.postScriptsPathSource)):
+            shutil.copytree(self.postScriptsPathSource, postScriptsPathTarget, ignore=ignore_patterns('.*'))
         else :
             print("No post script files found")
-        if (path.exists(preScriptsPathSource)):
-            shutil.copytree(preScriptsPathSource, preScriptsPathTarget, ignore=ignore_patterns('.*'))
+        if (path.exists(self.preScriptsPathSource)):
+            shutil.copytree(self.preScriptsPathSource, preScriptsPathTarget, ignore=ignore_patterns('.*'))
         else :
             print("No pre script files found")
         # removeLegacyFiles script
@@ -130,6 +140,8 @@ parser.add_argument("-r", "--repo", required=True , help = "Git Repository")
 parser.add_argument("-u", "--buildnum", default="1.0" , help = "Build Number")
 parser.add_argument("-a", "--name",  required=True , help = "Name of the package")
 parser.add_argument("-d", "--description", default="" , help = "Description of the package")
+parser.add_argument("-p", "--pre", default="" , help = "Folder of the pre scripts")
+parser.add_argument("-o", "--post", default="" , help = "Folder of the post scripts")
 args = parser.parse_args()
 
 packager = Packager()
@@ -140,6 +152,8 @@ packager.setSugarVersion(args.version)
 packager.setVersion(args.buildnum)
 packager.setName(args.name)
 packager.setDescription(args.description)
+packager.setPreScriptsPath(args.pre)
+packager.setPostScriptsPath(args.post)
 packager.createPackage()
 
 
