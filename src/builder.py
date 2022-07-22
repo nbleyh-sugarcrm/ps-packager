@@ -34,6 +34,7 @@ class Builder():
         self.configureInstance()
 
         print("4. Setup Sugar environment")
+        os.system("sudo chmod 777 -R elasticsearch")
         os.system("docker-compose -f src/sugar12_stack.yml up -d")
         # Wait until containers are running
         time.sleep(60)
