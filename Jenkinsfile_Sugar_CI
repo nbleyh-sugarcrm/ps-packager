@@ -59,7 +59,7 @@ pipeline {
                         '''
                     }
                 }
-                archiveArtifacts artifacts: '*.zip', onlyIfSuccessful: true
+                archiveArtifacts artifacts: '*.zip', onlyIfSuccessful: false
             }
         }
         stage('Install Sugar Package') {
@@ -67,6 +67,7 @@ pipeline {
                 sh '''
                    python3 src/installer.py -a "${PACKAGE_NAME}"
                 '''
+                archiveArtifacts artifacts: 'data/sugar/sugarcrm.log', onlyIfSuccessful: false
            }
         }
         stage('Perform PHPUnit Tests') {
