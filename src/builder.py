@@ -18,6 +18,7 @@ class Builder():
         cwd = os.getcwd()
         self.dataPath = cwd+"/data/"
         self.dbPath = cwd+"/mysql/"
+        self.repairScript = cwd+"/src/repair.php"
         self.sugarVersion = sugarversion.SugarVersion(version)
         self.backupName = backup
         self.ftpPwd = ftpPwd
@@ -109,6 +110,8 @@ class Builder():
         config_override.write("\n$sugar_config['full_text_engine']['Elastic']['port'] = '9200';  ")
         config_override.write("\n$sugar_config['moduleInstaller']['packageScan'] = false;")
         config_override.close()
+        # QRR
+        shutil.copy(self.repairScript, self.dataPath+"/sugar/)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-b", "--backup",  required=True , help = "Name of the backup file")

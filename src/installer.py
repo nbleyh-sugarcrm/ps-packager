@@ -11,7 +11,6 @@ class Installer():
 
     def __init__(self):
         cwd = os.getcwd()
-        self.repairScript = cwd+"/src/repair.php"
         self.sugarPath = cwd+"/data/sugar"
 
     def setSugarURL(self, sugarURL):
@@ -56,7 +55,6 @@ class Installer():
             raise Exception("Package installation failed: "+installResponse.json())
         print("Installation status: "+installResponse.json()["status"])
         # 4. Perform QRR
-        shutil.copy(self.repairScript, self.sugarPath)
         os.system("sudo chmod 777 "+self.sugarPath+"/repair.php")
         os.system("docker exec sugar-web1 php /var/www/html/sugar/repair.php")
 
