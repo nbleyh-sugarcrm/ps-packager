@@ -1,11 +1,18 @@
 import requests
 import json
 import os.path
+import os
 import argparse
 import time
+import shutil
 
 # Command: python3 src/installer.py -a "ZHINST Phase 1 S27"
 class Installer():
+
+    def __init__(self):
+        cwd = os.getcwd()
+        self.repairScript = cwd+"/src/repair.php"
+        self.sugarPath = cwd+"/data/sugar"
 
     def setSugarURL(self, sugarURL):
         self.sugarAuthURL = sugarURL+"/rest/v11/oauth2/token"
@@ -48,6 +55,10 @@ class Installer():
         if (installResponse.json()["status"]!="installed"):
             raise Exception("Package installation failed: "+installResponse.json())
         print("Installation status: "+installResponse.json()["status"])
+        # 4. Perform QRR
+        shutil.copy(self.repairScript, self.sugarPath)
+        os.system("sudo chmod 777 "+self.sugarPath+"/repair.php")
+        os.system("docker exec sugar-web1 php /var/www/html/sugar/repair.php")
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--url",  default="http://localhost/sugar/" , help = "URL of the Sugar instance")
