@@ -111,7 +111,7 @@ class Builder():
         config_override.write("\n$sugar_config['moduleInstaller']['packageScan'] = false;")
         config_override.close()
         # QRR
-        shutil.copy(self.repairScript, self.dataPath+"/sugar/)
+        shutil.copy(self.repairScript, self.dataPath+"/sugar/")
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-b", "--backup",  required=True , help = "Name of the backup file")
