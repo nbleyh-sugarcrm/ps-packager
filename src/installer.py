@@ -56,7 +56,7 @@ class Installer():
         print("Installation status: "+installResponse.json()["status"])
         # 4. Perform QRR
         os.system("sudo chmod 777 "+self.sugarPath+"/repair.php")
-        os.system("docker exec sugar-web1 php /var/www/html/sugar/repair.php")
+        os.system("docker exec sugar-web1 runuser -l sugar -c 'php /var/www/html/sugar/repair.php'")
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--url",  default="http://localhost/sugar/" , help = "URL of the Sugar instance")
