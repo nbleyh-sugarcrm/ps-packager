@@ -5,6 +5,7 @@ import os
 import argparse
 import time
 import shutil
+import subprocess
 
 # Command: python3 src/installer.py -a "ZHINST Phase 1 S27"
 class Installer():
@@ -56,7 +57,8 @@ class Installer():
         print("Installation status: "+installResponse.json()["status"])
         # 4. Perform QRR
         os.system("sudo chmod 777 "+self.sugarPath+"/repair.php")
-        os.system("docker exec sugar-web1 php /var/www/html/sugar/repair.php")
+        proc = subprocess.Popen(["docker exec sugar-web1 php /var/www/html/sugar/repair.php"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+        proc.wait()
         os.system("sudo rm -rf "+self.sugarPath+"/cache/*")
 
 parser = argparse.ArgumentParser()
