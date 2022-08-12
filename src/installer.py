@@ -59,7 +59,8 @@ class Installer():
         os.system("sudo chmod 777 "+self.sugarPath+"/repair.php")
         proc = subprocess.Popen(["docker exec sugar-web1 php /var/www/html/sugar/repair.php"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
         proc.wait()
-        os.system("sudo rm -rf "+self.sugarPath+"/cache/*")
+        proc = subprocess.Popen(["sudo rm -rf "+self.sugarPath+"/cache/*"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+        proc.wait()
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--url",  default="http://localhost/sugar/" , help = "URL of the Sugar instance")
