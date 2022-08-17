@@ -24,7 +24,7 @@ pipeline {
         string(name: 'POST_FOLDER', defaultValue: '', description: 'Folder of the Post scripts. When left empty, default location will be used.')
         string(name: 'PRE_FOLDER', defaultValue: '', description: 'Folder of the Pre scripts. When left empty, default location will be used.')
         string(name: 'BACKUP_NAME', defaultValue: 'cht-dev.sugaropencloud.tar.gz', description: 'Name of the backup file')
-        choice(name: 'BACKUP_VERSION', choices: ['1200', '1130'],  description: 'Sugar Version of the backup')
+        choice(name: 'BACKUP_VERSION', choices: ['1210', '1200', '1130'],  description: 'Sugar Version of the backup')
     }
     options {
         // This is required if you want to clean before build
