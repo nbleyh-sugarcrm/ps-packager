@@ -57,9 +57,7 @@ class Installer():
         print("Installation status: "+installResponse.json()["status"])
         # 4. Perform QRR
         os.system("sudo chmod 777 "+self.sugarPath+"/repair.php")
-        proc = subprocess.Popen(["docker exec sugar-web1 php /var/www/html/sugar/repair.php"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
-        proc.wait()
-        proc = subprocess.Popen(["sudo rm -rf "+self.sugarPath+"/cache/*"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+        proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'php /var/www/html/sugar/repair.php'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
         proc.wait()
 
 parser = argparse.ArgumentParser()
