@@ -56,9 +56,10 @@ class Installer():
             raise Exception("Package installation failed: "+installResponse.json())
         print("Installation status: "+installResponse.json()["status"])
         # 4. Perform QRR
-        os.system("sudo chmod 777 "+self.sugarPath+"/repair.php")
+        print("Run QRR")
         proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'php /var/www/html/sugar/repair.php'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
         proc.wait()
+        print("QRR Finished")
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--url",  default="http://localhost/sugar/" , help = "URL of the Sugar instance")
