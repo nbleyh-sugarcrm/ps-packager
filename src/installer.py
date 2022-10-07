@@ -59,8 +59,8 @@ class Installer():
         print("Run QRR")
         proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'php /var/www/html/sugar/repair.php'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
         proc.wait()
-        proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'rm -rf /var/www/html/sugar/cache/*'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
-        proc.wait()
+        #proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'rm -rf /var/www/html/sugar/cache/*'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+        #proc.wait()
         print("QRR Finished")
 
 parser = argparse.ArgumentParser()
