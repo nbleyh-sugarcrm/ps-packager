@@ -7,24 +7,22 @@ import shutil
 import subprocess
 import datetime
 import sugarversion
-import requests
+from ftplib import FTP_TLS
 
-# Command: python3 src/builder.py
+# Command: python3 src/builder.py -b cht-dev.sugaropencloud.tar.gz -p 2Cp5WvCxJJykcyy
 
 # Sets up a Sugar instance based on a backup
 class Builder():
 
-    def __init__(self, version, user, pwd, sugarURL, insightsURL):
+    def __init__(self, version, backup, ftpUser, ftpPwd):
         cwd = os.getcwd()
         self.dataPath = cwd+"/data/"
         self.dbPath = cwd+"/mysql/"
         self.repairScript = cwd+"/src/repair.php"
         self.sugarVersion = sugarversion.SugarVersion(version)
-        self.sugarPwd = pwd
-        self.sugarUser = user
-        self.sugarURL = sugarURL
-        self.sugarAuthURL = sugarURL+"/rest/v11/oauth2/token"
-        self.sugarInsightsURL = insightsURL+"/api/v1/backups"
+        self.backupName = backup
+        self.ftpPwd = ftpPwd
+        self.ftpUser = ftpUser
 
     def setupInstance(self):
         print("1. Cleanup...")
@@ -54,28 +52,13 @@ class Builder():
         os.mkdir(self.dataPath)
 
     def download(self):
-        # 1. Authenticate
-        data = { "grant_type":"password",
-            "client_id":"sugar",
-            "client_secret":"",
-            "username":self.sugarUser,
-            "password":self.sugarPwd,
-            "platform":"base"}
-        authResponse = requests.post(url = self.sugarAuthURL, data = data)
-        # 2. Get backup URL
-        token = authResponse.json()["access_token"]
-        header = {
-            "OAuth-Token" : token,
-            "Content-Type" : "application/json",
-            "X-Sugar-FQDN" : "ewnutrition-dev.sugaropencloud.eu"
-            }
-        backupResponse = requests.get(url = self.sugarInsightsURL, headers=header)
-        downloadURL = backupResponse.json()["backups"][0]['download_url']
-        self.backupName = downloadURL.split("/")[-1]
-
         print("Download backup...")
-        os.system("wget -P "+os.getcwd()+" "+downloadURL)
-        self.extractBackup()
+        with FTP_TLS('ftp.sugarcrm.eu', self.ftpUser, self.ftpPwd) as ftp:
+            ftp.prot_p()
+            with open(os.getcwd()+"/"+self.backupName, 'wb') as local_file:
+                ftp.retrbinary("RETR "+self.backupName, local_file.write)
+            ftp.quit()
+            self.extractBackup()
         print("Download upgrader...")
         os.system("wget -P "+self.dataPath+" "+self.sugarVersion.getSilentUpgrader())
         os.system("unzip -qq "+self.dataPath+"/"+self.sugarVersion.getUpgraderFile()+" -d "+self.dataPath+"/upgrader")
@@ -131,12 +114,11 @@ class Builder():
         shutil.copy(self.repairScript, self.dataPath+"/sugar/")
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-v", "--version", default="1220" , help = "The Sugar Version")
-parser.add_argument("-u", "--user", default="nbleyh" , help = "Admin user of the Sugar instance")
-parser.add_argument("-p", "--pwd", default="Sugar123" , help = "Password of the admin user")
-parser.add_argument("-r", "--url",  default="https://ewnutrition-dev.sugaropencloud.eu/" , help = "URL of the Sugar instance")
-parser.add_argument("-i", "--insights",  default="https://sugarcloud-insights-euc1.service.sugarcrm.com" , help = "URL of Sugar Insights")
+parser.add_argument("-b", "--backup",  required=True , help = "Name of the backup file")
+parser.add_argument("-v", "--version", default="1130" , help = "The Sugar Version")
+parser.add_argument("-p", "--ftppwd", required=True , help = "Password to access the FTP server to download the backup")
+parser.add_argument("-u", "--ftpuser", required=True , help = "User to access the FTP server to download the backup")
 args = parser.parse_args()
 
-builder = Builder(args.version, args.user, args.pwd, args.url, args.insights)
+builder = Builder(args.version, args.backup, args.ftpuser, args.ftppwd)
 builder.setupInstance()
