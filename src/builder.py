@@ -35,16 +35,16 @@ class Builder():
         self.download()
 
         print("3. Configure instance...")
-        #self.configureInstance()
+        self.configureInstance()
 
         print("4. Setup Sugar environment")
-        #os.system("sudo chmod -R 777 elasticsearch")
-        #os.system("docker-compose -f src/sugar12_stack.yml up -d")
+        os.system("sudo chmod -R 777 elasticsearch")
+        os.system("docker-compose -f src/sugar12_stack.yml up -d")
         # Wait until containers are running
         time.sleep(60)
 
         print("5. Import database...")
-        #self.importDatabase()
+        self.importDatabase()
 
     def cleanup(self):
         os.system("docker-compose -f src/sugar12_stack.yml down --remove-orphans")
