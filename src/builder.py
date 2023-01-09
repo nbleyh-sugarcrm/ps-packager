@@ -9,7 +9,7 @@ import datetime
 import sugarversion
 import requests
 
-# Command: python3 src/builder.py
+# Command:python3 src/builder.py -r https://cht-dev.sugaropencloud.eu/ -i https://sugarcloud-insights-euc1.service.sugarcrm.com -u nbleyh -p *** -v 1220
 
 # Sets up a Sugar instance based on a backup
 class Builder():
@@ -25,6 +25,7 @@ class Builder():
         self.sugarURL = sugarURL
         self.sugarAuthURL = sugarURL+"/rest/v11/oauth2/token"
         self.sugarInsightsURL = insightsURL+"/api/v1/backups"
+        self.FQDN =  sugarURL.replace("https://", "").replace("/", "")
 
     def setupInstance(self):
         print("1. Cleanup...")
@@ -34,16 +35,16 @@ class Builder():
         self.download()
 
         print("3. Configure instance...")
-        self.configureInstance()
+        #self.configureInstance()
 
         print("4. Setup Sugar environment")
-        os.system("sudo chmod -R 777 elasticsearch")
-        os.system("docker-compose -f src/sugar12_stack.yml up -d")
+        #os.system("sudo chmod -R 777 elasticsearch")
+        #os.system("docker-compose -f src/sugar12_stack.yml up -d")
         # Wait until containers are running
         time.sleep(60)
 
         print("5. Import database...")
-        self.importDatabase()
+        #self.importDatabase()
 
     def cleanup(self):
         os.system("docker-compose -f src/sugar12_stack.yml down --remove-orphans")
@@ -67,7 +68,7 @@ class Builder():
         header = {
             "OAuth-Token" : token,
             "Content-Type" : "application/json",
-            "X-Sugar-FQDN" : "ewnutrition-dev.sugaropencloud.eu"
+            "X-Sugar-FQDN" : self.FQDN
             }
         backupResponse = requests.get(url = self.sugarInsightsURL, headers=header)
         downloadURL = backupResponse.json()["backups"][0]['download_url']
@@ -134,7 +135,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--version", default="1220" , help = "The Sugar Version")
 parser.add_argument("-u", "--user", default="nbleyh" , help = "Admin user of the Sugar instance")
 parser.add_argument("-p", "--pwd", default="Sugar123" , help = "Password of the admin user")
-parser.add_argument("-r", "--url",  default="https://ewnutrition-dev.sugaropencloud.eu/" , help = "URL of the Sugar instance")
+parser.add_argument("-r", "--url",  default="https://ewnutrition-dev.sugaropencloud.eu" , help = "URL of the Sugar instance")
 parser.add_argument("-i", "--insights",  default="https://sugarcloud-insights-euc1.service.sugarcrm.com" , help = "URL of Sugar Insights")
 args = parser.parse_args()
 
