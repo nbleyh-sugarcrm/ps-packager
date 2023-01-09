@@ -35,7 +35,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 cleanWs()
-                git branch: 'CI', credentialsId: 'GitHub Sugar User', url: 'https://github.com/nbleyh-sugarcrm/ps-packager'
+                git branch: 'CI_2.0', credentialsId: 'GitHub Sugar User', url: 'https://github.com/nbleyh-sugarcrm/ps-packager'
             }
         }
         stage('Setup Sugar Instance') {
