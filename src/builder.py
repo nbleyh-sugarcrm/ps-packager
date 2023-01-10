@@ -135,20 +135,20 @@ class Builder():
         config_override.close()
         # QRR
         shutil.copy(self.repairScript, self.dataPath+"/sugar/")
-
-    def anonymize(self):
-        # Copy files
+        # Copy files for anonymize function
         commandPath = self.dataPath+"sugar/custom/src/Console/Command"
         os.makedirs(commandPath)
         shutil.copy(self.dbCommand, commandPath)
         registerPath = self.dataPath+"sugar/custom/Extension/application/Ext/Console"
         os.makedirs(registerPath)
         shutil.copy(self.registerDbCommand, registerPath)
+
+    def anonymize(self):
         # Perform QRR
         proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'php /var/www/html/sugar/repair.php'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
         proc.wait()
-        proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'rm -rf /var/www/html/sugar/cache/*'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
-        proc.wait()
+        #proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'rm -rf /var/www/html/sugar/cache/*'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+        #proc.wait()
         # Run CLI
         proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'php /var/www/html/sugar/bin/sugarcrm ps:prunedb'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
 
