@@ -9,7 +9,7 @@ import glob
 import subprocess
 from pathlib import Path
 
-# Command: python3 src/packager.py -t zhinst_1120_phase1_S28 -b zhinst_1120_phase1_S27 -r git@github.com:sugarcrm-ps/ps-dev-zhinst.git -u "1.0" -a "ZHINST Phase 1 S27"
+# Command: python3 src/packager.py -t SM-47 -b r10 -r git@github.com:nbleyh-sugarcrm/ps-dev-smg.git -u "1.0" -a "Bookingkit Jobs" -o "customer/upgrade/smb_122_phase2/scripts/php/post"
 
 class Packager():
 
@@ -18,7 +18,7 @@ class Packager():
         self.repoPath = cwd+"/repo"
         self.deltaPath=cwd+"/delta"
         self.packagePath = cwd+"/package"
-        self.removeLegacyFilesScript = cwd+"/src/removeLegacyFiles.php"
+        self.removeLegacyFilesScript = cwd+"/src/php/removeLegacyFiles.php"
         self.deleteFiles = False
         self.man = manifest.Manifest()
 
@@ -133,7 +133,7 @@ class Packager():
                 os.remove(os.path.join(os.getcwd(), f))
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-v", "--version", default="11.2" , help = "Sugar Version")
+parser.add_argument("-v", "--version", default="12.*" , help = "Sugar Version")
 parser.add_argument("-t", "--target", required=True , help = "Name of the Target Branch")
 parser.add_argument("-b", "--base", required=True , help = "Name of the Base Branch")
 parser.add_argument("-r", "--repo", required=True , help = "Git Repository")

@@ -9,7 +9,7 @@ import datetime
 import sugarversion
 import requests
 
-# Command:python3 src/builder.py -r https://cht-dev.sugaropencloud.eu/ -i https://sugarcloud-insights-euc1.service.sugarcrm.com -u nbleyh -p *** -v 1220
+# Command: python3 src/builder.py -r https://cht-dev.sugaropencloud.eu/ -i https://sugarcloud-insights-euc1.service.sugarcrm.com -u nbleyh -p *** -v 1220
 
 # Sets up a Sugar instance based on a backup
 class Builder():
@@ -18,7 +18,9 @@ class Builder():
         cwd = os.getcwd()
         self.dataPath = cwd+"/data/"
         self.dbPath = cwd+"/mysql/"
-        self.repairScript = cwd+"/src/repair.php"
+        self.repairScript = cwd+"/src/php/repair.php"
+        self.dbCommand = cwd+"/src/php/PruneDatabase.php"
+        self.registerDbCommand = cwd+"/src/php/RegisterPuneDatabaseCommand.php"
         self.sugarVersion = sugarversion.SugarVersion(version)
         self.sugarPwd = pwd
         self.sugarUser = user
@@ -45,6 +47,9 @@ class Builder():
 
         print("5. Import database...")
         self.importDatabase()
+
+        print("6. Anonymize data...")
+        self.anonymize()
 
     def cleanup(self):
         os.system("docker-compose -f src/sugar12_stack.yml down --remove-orphans")
@@ -130,6 +135,23 @@ class Builder():
         config_override.close()
         # QRR
         shutil.copy(self.repairScript, self.dataPath+"/sugar/")
+
+    def anonymize(self):
+        # Copy files
+        commandPath = self.dataPath+"sugar/custom/src/Console/Command"
+        os.makedirs(commandPath)
+        shutil.copy(self.dbCommand, commandPath)
+        registerPath = self.dataPath+"sugar/custom/Extension/application/Ext/Console"
+        os.makedirs(registerPath)
+        shutil.copy(self.registerDbCommand, registerPath)
+        # Perform QRR
+        proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'php /var/www/html/sugar/repair.php'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+        proc.wait()
+        proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'rm -rf /var/www/html/sugar/cache/*'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+        proc.wait()
+        # Run CLI
+        proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'php /var/www/html/sugar/bin/sugarcrm ps:prunedb'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--version", default="1220" , help = "The Sugar Version")
