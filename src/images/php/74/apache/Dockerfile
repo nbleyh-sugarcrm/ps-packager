@@ -67,7 +67,6 @@ RUN docker-php-ext-install mysqli \
     && docker-php-ext-install imap \
     && docker-php-ext-install zip \
     && docker-php-ext-install ldap \
-    && pecl install xdebug \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && docker-php-ext-install soap

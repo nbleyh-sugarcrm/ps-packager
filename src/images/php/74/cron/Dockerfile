@@ -32,7 +32,7 @@ RUN echo 'date.timezone = GMT' >> /usr/local/etc/php/conf.d/docker.ini \
     && echo 'error_log = /proc/1/fd/1' >> /usr/local/etc/php/conf.d/docker.ini \
     && echo 'log_errors = On' >> /usr/local/etc/php/conf.d/docker.ini \
     && echo 'display_errors = Off' >> /usr/local/etc/php/conf.d/docker.ini \
-    && echo 'memory_limit = -1' >> /usr/local/etc/php/conf.d/docker.ini \
+    && echo 'memory_limit = 1G' >> /usr/local/etc/php/conf.d/docker.ini \
     && echo 'max_execution_time = -1' >> /usr/local/etc/php/conf.d/docker.ini \
     && echo 'realpath_cache_size = 512k' >> /usr/local/etc/php/conf.d/docker.ini \
     && echo 'realpath_cache_ttl = 600' >> /usr/local/etc/php/conf.d/docker.ini \
@@ -49,7 +49,6 @@ RUN docker-php-ext-install mysqli \
     && docker-php-ext-install imap \
     && docker-php-ext-install zip \
     && docker-php-ext-install ldap \
-    && pecl install xdebug \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && docker-php-ext-install soap
