@@ -48,8 +48,8 @@ class Builder():
         print("5. Import database...")
         self.importDatabase()
 
-        #print("6. Anonymize data...")
-        #self.anonymize()
+        print("6. Anonymize data...")
+        self.anonymize()
 
     def cleanup(self):
         os.system("docker-compose -f src/sugar12_stack.yml down --remove-orphans")
