@@ -114,7 +114,7 @@ class Builder():
         proc = subprocess.Popen(["docker exec sugar-mysql mysql -u root -proot -e 'create database sugar'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
         proc.wait()
         # Import file to database
-        proc = subprocess.Popen(["cat "+self.dataPath+self.sugarVersion.getSQLFileName()+" | docker exec -i sugar-mysql mysql -u root -proot sugar"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+        proc = subprocess.Popen(["cat "+self.dataPath+self.sugarVersion.getSQLFileName()+" | grep -v -E '^INSERT INTO `(accounts[^ ]*|contacts[^ ]*|leads[^ ]*|opportunities[^ ]*|revenue_line_items[^ ]*|advancedreports[^ ]*|activities[^ ]*|quotes[^ ]*|products[^ ]*|product_bundle[^ ]*|purchase[^ ]*|audit_events|cj_[^ ]*|dri_[^ ]*|cases[^ ]*|calls[^ ]*|meetings[^ ]*|notes[^ ]*|tasks[^ ]*|document[^ ]*|email[^ ]*|outbound_email|eapm|job_queue|fts_queue|pmse_inbox|pmse_bpm_flow|pmse_email_message|pmse_bpm_form_action|pmse_bpm_thread|locked_field[^ ]*|hint_[^ ]*|forecast_worksheets|mobile_devices|metrics[^ ]*|metadata_cache|team_sets_modules|tag[^ ]*|subscriptions|sugarfavorites|report[^ ]*|product_templates[^ ]*|tracker[^ ]*|users_[^ ]*|user_preferences|upgrade_history|push_notifications)` VALUES ' | docker exec -i sugar-mysql mysql -u root -proot sugar"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
         proc.wait()
         # Set admin password
         proc = subprocess.Popen(["cat src/sugarconfig/admin_pwd.sql | docker exec -i sugar-mysql mysql -u root -proot sugar"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
