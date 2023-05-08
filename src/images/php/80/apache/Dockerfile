@@ -71,6 +71,9 @@ RUN docker-php-ext-install mysqli \
     && docker-php-ext-enable redis \
     && docker-php-ext-install soap
 
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
 && docker-php-ext-install -j$(nproc) gd
 
