@@ -49,8 +49,6 @@ RUN docker-php-ext-install mysqli \
     && docker-php-ext-install zip \
     && docker-php-ext-install ldap \
     && docker-php-ext-install ldap \
-# cannot install latest Xdebug any longer on php 7.4 as it requires php 8+
-    && pecl install xdebug-3.1.6 \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && docker-php-ext-install soap
@@ -58,7 +56,6 @@ RUN docker-php-ext-install mysqli \
 RUN docker-php-ext-install -j$(nproc) gd
 
 # disable by default, it can be enabled locally
-#COPY config/php/mods-available/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 COPY config/php/mods-available/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 COPY config/php/opcache-blacklist /usr/local/etc/php/opcache-blacklist
 

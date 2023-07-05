@@ -3,8 +3,8 @@ version: '3'
 services:
   web1:
     container_name: "sugar-web1"
-    image: php80_web
-    build: images/php/80/apache
+    image: php82_web
+    build: images/php/82/apache
     ports:
       - "80:80"
     environment:
@@ -23,8 +23,8 @@ services:
       - redis
   cron:
     container_name: "sugar-cron"
-    image: php80_web_cron
-    build: images/php/80/cron
+    image: php82_web_cron
+    build: images/php/82/cron
     volumes:
       - ../data:/var/www/html
     depends_on:
