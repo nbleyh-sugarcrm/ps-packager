@@ -38,8 +38,8 @@ services:
       - redis
   mysql:
     container_name: "sugar-mysql"
-    image: sugar_mysql80
-    build: images/mysql/80
+    image: sugar_mysql57
+    build: images/mysql/57
     ports:
       - "3306:3306"
     volumes:
