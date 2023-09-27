@@ -10,10 +10,8 @@ class Manifest():
     def __init__(self):
        date_time = datetime.fromtimestamp(int(time.time()))
        self.attributes = {'author' : "SugarCRM Projects", 'key' :  int(time.time()) , 'published_date' : date_time.strftime("%Y-%m-%d %H:%M:%S"), 'is_uninstallable' : 'false', 'type' : 'module'}
-       self.installDefs = {'id' : int(time.time()), 'copy' : {0 : {'from' : '<basepath>/files', 'to' : '.' } }}
        self.manifestArray = "$manifest"
        self.installdefsArray = "$installdefs"
-       self.manifest = {self.manifestArray : self.attributes, self.installdefsArray : self.installDefs}
 
     def setName(self, name):
         self.attributes['name'] = name
@@ -29,7 +27,12 @@ class Manifest():
     def setVersion(self, version):
         self.attributes['version'] = version
 
-    def createManifest(self, packagePath):
+    def createManifest(self, packagePath, copy):
+        if copy:
+            self.installDefs = {'id' : int(time.time()), 'copy' : {0 : {'from' : '<basepath>/files', 'to' : '.' } }}
+        else:
+            self.installDefs = {'id' : int(time.time())}
+        self.manifest = {self.manifestArray : self.attributes, self.installdefsArray : self.installDefs}
         self.setRemoveFiles(packagePath+"/delete.txt")
         self.setPostScripts(packagePath+"/scripts/post")
         self.setPreScripts(packagePath+"/scripts/pre")

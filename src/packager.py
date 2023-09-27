@@ -9,7 +9,7 @@ import glob
 import subprocess
 from pathlib import Path
 
-# Command: python3 src/packager.py -t SM-47 -b r10 -r git@github.com:nbleyh-sugarcrm/ps-dev-smg.git -u "1.0" -a "Bookingkit Jobs" -o "customer/upgrade/smb_122_phase2/scripts/php/post"
+# Command: python3 src/packager.py -t smatrics_131_R2023Q3B -b smatrics_131_R2023Q3 -r git@github.com:sugarcrm-ps/ps-dev-smatrics -u "1.0" -a "SMATRICS"
 
 class Packager():
 
@@ -70,10 +70,10 @@ class Packager():
         self.processDeletedFiles()
 
         print("5. Copy files...")
-        self.copyFiles()
+        copy= self.copyFiles()
 
         print("6. Create manifest...")
-        self.man.createManifest(self.packagePath)
+        self.man.createManifest(self.packagePath, copy)
 
         print("7. Zip package...")
         shutil.make_archive(self.packagePath+"/../"+time.strftime("%Y%m%d")+"_"+self.name.replace(" ", "_"), 'zip', self.packagePath)
@@ -103,7 +103,10 @@ class Packager():
 
     def copyFiles(self):
         # Application files
-        shutil.copytree(self.deltaPath+"/sugarcrm", self.packagePath+"/files")
+        copy = False
+        if (path.exists(self.deltaPath+"/sugarcrm")):
+            shutil.copytree(self.deltaPath+"/sugarcrm", self.packagePath+"/files")
+            copy = True
         # Script files
         postScriptsPathTarget = self.packagePath+"/scripts/post/"
         preScriptsPathTarget = self.packagePath+"/scripts/pre/"
@@ -120,6 +123,7 @@ class Packager():
             preScripts = Path(preScriptsPathTarget)
             preScripts.mkdir(parents=True, exist_ok=True)
             shutil.copy(self.removeLegacyFilesScript, preScriptsPathTarget)
+        return copy
 
     def cleanup(self):
         if (path.exists(self.repoPath)):
@@ -133,7 +137,7 @@ class Packager():
                 os.remove(os.path.join(os.getcwd(), f))
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-v", "--version", default="12.*" , help = "Sugar Version")
+parser.add_argument("-v", "--version", default="13.*" , help = "Sugar Version")
 parser.add_argument("-t", "--target", required=True , help = "Name of the Target Branch")
 parser.add_argument("-b", "--base", required=True , help = "Name of the Base Branch")
 parser.add_argument("-r", "--repo", required=True , help = "Git Repository")
