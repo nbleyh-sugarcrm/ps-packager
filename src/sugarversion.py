@@ -22,6 +22,8 @@ class SugarVersion():
             return "https://honeycomb.sugarcrm.io/download/train/13.2.0/49/silentUpgrade-PRO-13.2.0.zip"
         if (self.version == '1320'):
             return "https://honeycomb.sugarcrm.io/download/release/13.2.0/205/silentUpgrade-PRO-13.2.0.zip"
+        if (self.version == '1330'):
+            return "https://honeycomb.service.sugarcrm.com/trains/233/builds/6751/files/silentUpgrade-PRO-13.3.0.zip"
         else:
             print(self.version+" is not a supported Sugar Version!")
 
@@ -42,6 +44,8 @@ class SugarVersion():
             return "https://honeycomb.sugarcrm.io/download/train/13.2.0/49/SugarEnt-Upgrade-13.1.0-to-13.2.0.zip"
         if (self.version == '1320'):
             return "https://honeycomb.sugarcrm.io/download/train/13.3.0/103/SugarEnt-Upgrade-13.2.0-to-13.3.0.zip"
+        if (self.version == '1330'):
+            return "https://honeycomb.service.sugarcrm.com/trains/233/builds/6751/files/SugarEnt-Upgrade-13.2.0-to-13.3.0.zip"
         else:
             print(self.version+" is not a supported Sugar Version!")
 
@@ -68,6 +72,8 @@ class SugarVersion():
             return "https://honeycomb.sugarcrm.io/download/release/13.1.0/251/SugarUlt-13.1.0-tests.zip"
         if (self.version == '1320'):
             return "https://honeycomb.sugarcrm.io/download/release/13.2.0/205/SugarEnt-13.2.0-tests.zip"
+        if (self.version == '1330'):
+            return "https://honeycomb.service.sugarcrm.com/trains/233/builds/6751/files/SugarEnt-13.3.0-tests.zip"
         else:
             print(self.version+" is not a supported Sugar Version!")
 
