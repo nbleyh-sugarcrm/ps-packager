@@ -41,7 +41,7 @@ class Builder():
 
         print("4. Setup Sugar environment")
         os.system("sudo chmod -R 777 elasticsearch")
-        os.system("docker-compose -f src/sugar13_stack.yml up -d")
+        os.system("docker compose -f src/sugar13_stack.yml up -d")
         # Wait until containers are running
         time.sleep(60)
 
@@ -52,7 +52,7 @@ class Builder():
         self.anonymize()
 
     def cleanup(self):
-        os.system("docker-compose -f src/sugar12_stack.yml down --remove-orphans")
+        os.system("docker compose -f src/sugar12_stack.yml down --remove-orphans")
         if (path.exists(self.dataPath)):
             shutil.rmtree(self.dataPath)
         if (path.exists(self.dbPath)):
