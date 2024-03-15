@@ -66,16 +66,16 @@ class Packager():
         print("3. Perform delta...")
         self.performDelta()
 
-        print("4. Check deleted files...")
-        self.processDeletedFiles()
+        #print("4. Check deleted files...")
+        #self.processDeletedFiles()
 
-        print("5. Copy files...")
+        print("4. Copy files...")
         copy= self.copyFiles()
 
-        print("6. Create manifest...")
+        print("5. Create manifest...")
         self.man.createManifest(self.packagePath, copy)
 
-        print("7. Zip package...")
+        print("6. Zip package...")
         shutil.make_archive(self.packagePath+"/../"+time.strftime("%Y%m%d")+"_"+self.name.replace(" ", "_"), 'zip', self.packagePath)
 
     def performGitCheckout(self):
