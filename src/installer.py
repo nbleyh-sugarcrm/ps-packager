@@ -58,7 +58,7 @@ class Installer():
         print("Installation status: "+installResponse.json()["status"])
         # 4. Perform QRR
         print("Run QRR")
-        proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'php /var/www/html/sugar/repair.php'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+        proc = subprocess.Popen(["sudo -S docker exec -t --user sugar sugar-web1 bash -c 'php /var/www/html/sugar/repair.php' < /home/ansible/password.secret"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
         proc.wait()
         print("QRR Finished")
 

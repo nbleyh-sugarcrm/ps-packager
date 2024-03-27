@@ -75,7 +75,7 @@ pipeline {
             steps {
                 sh '''
                     set +e
-                    sudo -S docker exec -t --user sugar sugar-web1 /bin/sh -c 'composer install && cd tests/unit-php && ../../vendor/bin/phpunit --log-junit results.xml < /home/ansible/password.secret'
+                    sudo -S docker exec -t --user sugar sugar-web1 /bin/sh -c 'composer install && cd tests/unit-php && ../../vendor/bin/phpunit --log-junit results.xml' < /home/ansible/password.secret
                     set -e
                 '''
                 junit 'data/sugar/results.xml'
@@ -84,8 +84,8 @@ pipeline {
         stage('Perform Healthcheck') {
             steps {
                 sh '''
-                    sudo -S docker exec sugar-web1 /bin/sh -c 'chmod -R 777 /var/www/html/upgrader < /home/ansible/password.secret'
-                    sudo -S docker exec -t --user sugar sugar-web1 /bin/sh -c 'php /var/www/html/upgrader/CliUpgrader.php -z /var/www/html/upgrade.zip -l /var/www/html/upgrader/health.log -s /var/www/html/sugar/ -u admin -S healthcheck < /home/ansible/password.secret'
+                    sudo -S docker exec sugar-web1 /bin/sh -c 'chmod -R 777 /var/www/html/upgrader' < /home/ansible/password.secret
+                    sudo -S docker exec -t --user sugar sugar-web1 /bin/sh -c 'php /var/www/html/upgrader/CliUpgrader.php -z /var/www/html/upgrade.zip -l /var/www/html/upgrader/health.log -s /var/www/html/sugar/ -u admin -S healthcheck' < /home/ansible/password.secret
                 '''
                 findText(
                     textFinders: [
