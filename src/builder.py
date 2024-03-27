@@ -39,8 +39,6 @@ class Builder():
         print("3. Configure instance...")
         self.configureInstance()
         
-sudo -S /path/to/command < password.secret
-
         print("4. Setup Sugar environment")
         os.system("sudo -S chmod -R 777 elasticsearch < /home/ansible/password.secret")
         os.system("sudo -S docker compose -f src/sugar13_stack.yml up -d < /home/ansible/password.secret")
