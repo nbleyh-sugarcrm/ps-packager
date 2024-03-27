@@ -38,10 +38,12 @@ class Builder():
 
         print("3. Configure instance...")
         self.configureInstance()
+        
+sudo -S /path/to/command < password.secret
 
         print("4. Setup Sugar environment")
-        os.system("sudo chmod -R 777 elasticsearch")
-        os.system("docker compose -f src/sugar13_stack.yml up -d")
+        os.system("sudo -S chmod -R 777 elasticsearch < /home/ansible/password.secret")
+        os.system("sudo -S docker compose -f src/sugar13_stack.yml up -d < /home/ansible/password.secret")
         # Wait until containers are running
         time.sleep(60)
 
@@ -52,7 +54,7 @@ class Builder():
         self.anonymize()
 
     def cleanup(self):
-        os.system("docker compose -f src/sugar12_stack.yml down --remove-orphans")
+        os.system("sudo -S docker compose -f src/sugar12_stack.yml down --remove-orphans < /home/ansible/password.secret")
         if (path.exists(self.dataPath)):
             shutil.rmtree(self.dataPath)
         if (path.exists(self.dbPath)):

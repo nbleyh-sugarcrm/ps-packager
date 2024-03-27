@@ -43,17 +43,17 @@ class Tester():
         print("Run Healthcheck...")
         upgraderFile = self.silentUpgrader.split("/")[-1]
         packageFile = self.upgradePackage.split("/")[-1]
-        os.system("sudo wget -P "+self.dataPath+" "+self.silentUpgrader)
-        os.system("sudo unzip "+self.dataPath+"/"+upgraderFile+" -d "+self.dataPath+"/upgrader")
-        os.system("sudo wget -P "+self.dataPath+" "+self.upgradePackage)
-        os.system("docker exec "+self.dockerContainer+" php /var/www/html/upgrader/CliUpgrader.php -z /var/www/html/"+packageFile+" -l /var/www/html/upgrader/health.log -s /var/www/html/sugar/ -u admin -S healthcheck")
+        os.system("wget -P "+self.dataPath+" "+self.silentUpgrader)
+        os.system("unzip "+self.dataPath+"/"+upgraderFile+" -d "+self.dataPath+"/upgrader")
+        os.system("wget -P "+self.dataPath+" "+self.upgradePackage)
+        os.system("sudo -S docker exec "+self.dockerContainer+" php /var/www/html/upgrader/CliUpgrader.php -z /var/www/html/"+packageFile+" -l /var/www/html/upgrader/health.log -s /var/www/html/sugar/ -u admin -S healthcheck < /home/ansible/password.secret")
 
     def runPHPUnitTests(self):
         print("Run PHPUnit Tests...")
         testsFile = self.phpUnitTests.split("/")[-1]
-        os.system("sudo wget -P "+self.dataPath+" "+self.phpUnitTests)
-        os.system("sudo unzip -o "+self.dataPath+"/"+testsFile+" -d data/sugar")
-        os.system("docker exec sugar-web1 /bin/sh -c 'composer install && cd tests/unit-php && ../../vendor/bin/phpunit --log-junit results.xml'")
+        os.system("wget -P "+self.dataPath+" "+self.phpUnitTests)
+        os.system("unzip -o "+self.dataPath+"/"+testsFile+" -d data/sugar")
+        os.system("docker exec sugar-web1 /bin/sh -c 'composer install && cd tests/unit-php && ../../vendor/bin/phpunit --log-junit results.xml' < /home/ansible/password.secret")
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-u", "--upgrader",  required=True , help = "URL of the Silent Upgrader zip")
