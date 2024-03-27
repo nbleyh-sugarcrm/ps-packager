@@ -111,7 +111,7 @@ class Builder():
 
     def importDatabase(self):
         # Create database
-        proc = subprocess.Popen(["docker exec sugar-mysql mysql -u root -proot -e 'create database sugar'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+        proc = subprocess.Popen(["sudo -S docker exec sugar-mysql mysql -u root -proot -e 'create database sugar' < /home/ansible/password.secret"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
         proc.wait()
         # Import file to database
         proc = subprocess.Popen(["cat "+self.dataPath+self.sugarVersion.getSQLFileName()+" | grep -v -E '^INSERT INTO `(accounts[^ ]*|contacts[^ ]*|leads[^ ]*|opportunities[^ ]*|revenue_line_items[^ ]*|advancedreports[^ ]*|activities[^ ]*|quotes[^ ]*|products[^ ]*|product_bundle[^ ]*|purchase[^ ]*|audit_events|cj_[^ ]*|dri_[^ ]*|cases[^ ]*|calls[^ ]*|meetings[^ ]*|notes[^ ]*|tasks[^ ]*|document[^ ]*|email[^ ]*|outbound_email|eapm|job_queue|fts_queue|pmse_inbox|pmse_bpm_flow|pmse_email_message|pmse_bpm_form_action|pmse_bpm_thread|locked_field[^ ]*|hint_[^ ]*|forecast_worksheets|mobile_devices|metrics[^ ]*|metadata_cache|team_sets_modules|tag[^ ]*|subscriptions|sugarfavorites|report[^ ]*|product_templates[^ ]*|tracker[^ ]*|users_[^ ]*|user_preferences|upgrade_history|push_notifications)` VALUES ' | docker exec -i sugar-mysql mysql -u root -proot sugar"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
@@ -145,12 +145,10 @@ class Builder():
 
     def anonymize(self):
         # Perform QRR
-        proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'php /var/www/html/sugar/repair.php'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+        proc = subprocess.Popen(["sudo -S docker exec -t --user sugar sugar-web1 bash -c 'php /var/www/html/sugar/repair.php' < /home/ansible/password.secret"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
         proc.wait()
-        #proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'rm -rf /var/www/html/sugar/cache/*'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
-        #proc.wait()
         # Run CLI
-        proc = subprocess.Popen(["docker exec -t --user sugar sugar-web1 bash -c 'php /var/www/html/sugar/bin/sugarcrm ps:prunedb'"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+        proc = subprocess.Popen(["sudo -S docker exec -t --user sugar sugar-web1 bash -c 'php /var/www/html/sugar/bin/sugarcrm ps:prunedb' < /home/ansible/password.secret"], stdout=subprocess.PIPE, shell=True, universal_newlines=True)
 
 
 parser = argparse.ArgumentParser()
