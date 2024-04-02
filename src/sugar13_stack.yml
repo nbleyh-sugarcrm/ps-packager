@@ -60,7 +60,7 @@ services:
       - node.name=sugar1
       - cluster.name=sugarcrm79
       - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
     ulimits:
       memlock:
         soft: -1
