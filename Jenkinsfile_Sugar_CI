@@ -34,7 +34,10 @@ pipeline {
      stages {
         stage('Checkout') {
             steps {
-                cleanWs()
+                // cleanWs()
+                sh '''
+                    sudo -S rm -rf * < /home/ansible/password.secret
+                '''
                 git branch: 'CI_2.0', credentialsId: 'GitHub Sugar User', url: 'https://github.com/nbleyh-sugarcrm/ps-packager'
             }
         }
