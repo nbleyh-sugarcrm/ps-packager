@@ -68,6 +68,7 @@ pipeline {
         }
         stage('Install Sugar Package') {
             steps {
+                sleep 5
                 sh '''
                    python3 src/installer.py -a "${PACKAGE_NAME}"
                 '''
