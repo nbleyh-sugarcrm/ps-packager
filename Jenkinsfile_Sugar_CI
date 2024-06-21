@@ -68,12 +68,11 @@ pipeline {
         }
         stage('Install Sugar Package') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'SUGAR User', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh '''
-                        python3 src/installer.py -a "${PACKAGE_NAME} -u $USERNAME -p $PASSWORD"
-                    '''
-                    archiveArtifacts artifacts: 'data/sugar/sugarcrm.log', onlyIfSuccessful: false
-                }
+                sleep 5
+                sh '''
+                   python3 src/installer.py -a "${PACKAGE_NAME}"
+                '''
+                archiveArtifacts artifacts: 'data/sugar/sugarcrm.log', onlyIfSuccessful: false
            }
         }
         stage('Perform PHPUnit Tests') {
