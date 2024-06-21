@@ -42,7 +42,7 @@ class Installer():
                 "password":self.pwd,
                 "platform":"base"}
         authResponse = requests.post(url = self.sugarAuthURL, data = data)
-        if (authResponse!=200)
+        if (authResponse != 200):
             print(authResponse.status_code)
             raise Exception("Authentication failed")
         # 2. Upload package
