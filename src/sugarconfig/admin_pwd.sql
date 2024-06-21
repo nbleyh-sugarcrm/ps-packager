@@ -1,10 +1,3 @@
-UPDATE sugar.users SET user_name = 'admin'
-WHERE id = '1';
-UPDATE sugar.users SET is_admin = '1'
-WHERE id = '1';
-UPDATE sugar.users SET user_hash = '$2y$10$ua6PicOvqyYMKgOR6gzFcub.Z5s40j6moWRH4oaO.Ef667lz.nb0m'
-WHERE id = '1';
-UPDATE sugar.users SET status = 'Active'
-WHERE id = '1';
-UPDATE sugar.users SET deleted = '0'
-WHERE id = '1';
+REPLACE INTO sugar.users
+(id, user_name, user_hash, system_generated_password, pwd_last_changed, authenticate_id, sugar_login, picture, first_name, last_name, is_admin, external_auth_only, receive_notifications, description, date_entered, date_modified, modified_user_id, created_by, title, department, phone_home, phone_mobile, phone_work, phone_other, phone_fax, status, address_street, address_city, address_state, address_country, address_postalcode, default_team, team_set_id, deleted, portal_only, show_on_employees, employee_status, messenger_id, messenger_type, reports_to_id, is_group, preferred_language, last_login, acl_role_set_id, site_user_id, license_type, cookie_consent, cookie_consent_received_on, send_email_on_mention, sync_key, acl_team_set_id, business_center_id, customer_journey_access, customer_journey_last_active)
+VALUES('1', 'admin', '$2y$10$ua6PicOvqyYMKgOR6gzFcub.Z5s40j6moWRH4oaO.Ef667lz.nb0m', 0, '2015-07-23 15:10:00', NULL, 1, NULL, 'Technik', 'Administrator', 1, 0, 1, NULL, '2014-01-23 15:32:51', '2024-06-19 14:24:17', '1', NULL, 'Administrator', 'Technik', NULL, NULL, NULL, NULL, NULL, 'Active', NULL, NULL, NULL, NULL, NULL, '1', '1', 0, 0, 1, 'Active', NULL, NULL, NULL, 0, 'de_DE', '2024-06-19 14:24:02', NULL, '566b3c4cb6a84f89dbf74adc6a2e9e0ee48e2b3e25ad8a18d04537b524e05cc5', '["SUGAR_SELL_ADVANCED_BUNDLE"]', 1, '2020-04-29 07:05:37', 0, NULL, NULL, NULL, 0, NULL);
