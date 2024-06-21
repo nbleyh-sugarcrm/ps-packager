@@ -18,7 +18,7 @@ pipeline {
         string(name: 'BASE_BRANCH', defaultValue: '11_3_base', description: 'Branch containing the base code')
         string(name: 'TARGET_BRANCH', defaultValue: 'attb_113_phase1', description: 'Branch containing the target code')
         string(name: 'GIT_REPO', defaultValue: 'git@github.com:sugarcrm-ps/ps-dev-attb', description: 'Git repository of the Project')
-        string(name: 'SUGAR_VERSION', defaultValue: '13.*', description: 'Sugar version')
+        string(name: 'SUGAR_VERSION', defaultValue: '14.*', description: 'Sugar version')
         string(name: 'MANIFEST_DESCRIPTION', defaultValue: 'Generated Sugar Package', description: 'Description of the Sugar Package')
         string(name: 'PACKAGE_NAME', defaultValue: 'Package', description: 'Name of the Sugar Package')
         string(name: 'POST_FOLDER', defaultValue: '', description: 'Folder of the Post scripts. When left empty, default location will be used.')
