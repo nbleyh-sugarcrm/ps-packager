@@ -1,0 +1,91 @@
+/*
+Pre-requisites:
+- Credentials for GitHub user which has access rights to sugarcrm repositories need to be configured in Jenkins as Username/Password Credentials with ID "GitHub Sugar User"
+- Credentials for Sugar User need to be configured with ID "Sugar User"
+- GitHub Token for user which has access rights to sugarcrm repositories need to be configured in Jenkins as Secret Text with ID "GitHub Token"
+- Text Finder plugin needs to be installed on Jenkins
+- Git needs to be installed on Jenkins Worker
+- Pyhton 3 needs to installed on Jenkins worker
+- Rsync needs to be installed on Jenkins worker
+- Requests needs to be installed on Jenkins worker: python3 -m pip install --upgrade pip
+-                                                   pip install requests
+
+*/ 
+
+pipeline {
+    agent any
+    parameters {
+        string(name: 'BASE_BRANCH', defaultValue: '11_3_base', description: 'Branch containing the base code')
+        string(name: 'TARGET_BRANCH', defaultValue: 'attb_113_phase1', description: 'Branch containing the target code')
+        string(name: 'GIT_REPO', defaultValue: 'git@github.com:sugarcrm-ps/ps-dev-attb', description: 'Git repository of the Project')
+        string(name: 'SUGAR_VERSION', defaultValue: '14.*', description: 'Sugar version')
+        string(name: 'MANIFEST_DESCRIPTION', defaultValue: 'Generated Sugar Package', description: 'Description of the Sugar Package')
+        string(name: 'PACKAGE_NAME', defaultValue: 'Package', description: 'Name of the Sugar Package')
+        string(name: 'POST_FOLDER', defaultValue: '', description: 'Folder of the Post scripts. When left empty, default location will be used.')
+        string(name: 'PRE_FOLDER', defaultValue: '', description: 'Folder of the Pre scripts. When left empty, default location will be used.')
+    }
+     stages {
+        stage('Generate Sugar Package') {
+            steps {
+                script {
+                    if (env.POST_FOLDER == '') {
+                        sh '''
+                            python3 src/packager.py -t ${TARGET_BRANCH} -b ${BASE_BRANCH} -r ${GIT_REPO} -v ${SUGAR_VERSION} -a "${PACKAGE_NAME}" -u ${BUILD_NUMBER} -d "${MANIFEST_DESCRIPTION}"
+                        '''
+                    } else {
+                        sh '''
+                            python3 src/packager.py -t ${TARGET_BRANCH} -b ${BASE_BRANCH} -r ${GIT_REPO} -v ${SUGAR_VERSION} -a "${PACKAGE_NAME}" -u ${BUILD_NUMBER} -d "${MANIFEST_DESCRIPTION}" -o ${POST_FOLDER}
+                        '''
+                    }
+                }
+                archiveArtifacts artifacts: '*.zip', onlyIfSuccessful: false
+            }
+        }
+        stage('Install Sugar Package') {
+            steps {
+                sleep 5
+                sh '''
+                   python3 src/installer.py -a "${PACKAGE_NAME}"
+                '''
+                archiveArtifacts artifacts: 'data/sugar/sugarcrm.log', onlyIfSuccessful: false
+           }
+        }
+        stage('Perform PHPUnit Tests') {
+            steps {
+                sh '''
+                    set +e
+                    sudo -S docker exec -t --user sugar sugar-web1 /bin/sh -c 'composer install && cd tests/unit-php && ../../vendor/bin/phpunit --log-junit results.xml' < /home/ansible/password.secret
+                    set -e
+                '''
+                junit 'data/sugar/results.xml'
+            }
+        }
+        stage('Perform Healthcheck') {
+            steps {
+                sh '''
+                    sudo -S docker exec sugar-web1 /bin/sh -c 'chmod -R 777 /var/www/html/upgrader' < /home/ansible/password.secret
+                    sudo -S docker exec -t --user sugar sugar-web1 /bin/sh -c 'php /var/www/html/upgrader/CliUpgrader.php -z /var/www/html/upgrade.zip -l /var/www/html/upgrader/health.log -s /var/www/html/sugar/ -u admin -S healthcheck' < /home/ansible/password.secret
+                '''
+                findText(
+                    textFinders: [
+                        textFinder (
+                            regexp: '\\[yellow\\]',
+                            fileSet: 'data/upgrader/health.log',
+                            changeCondition: 'MATCH_FOUND',
+                            alsoCheckConsoleOutput: false,
+                            buildResult: 'UNSTABLE'
+                        ),
+                        textFinder (
+                            regexp: '\\[red\\]',
+                            fileSet: 'data/upgrader/health.log',
+                            changeCondition: 'MATCH_FOUND',
+                            alsoCheckConsoleOutput: false,
+                            buildResult: 'FAILURE'
+                        )
+                    ]
+                )
+                archiveArtifacts artifacts: 'data/upgrader/health.log', onlyIfSuccessful: false
+            }
+        }
+    }
+}        

@@ -1,0 +1,44 @@
+/*
+Pre-requisites:
+- Credentials for GitHub user which has access rights to sugarcrm repositories need to be configured in Jenkins as Username/Password Credentials with ID "GitHub Sugar User"
+- Credentials for Sugar User need to be configured with ID "Sugar User"
+- GitHub Token for user which has access rights to sugarcrm repositories need to be configured in Jenkins as Secret Text with ID "GitHub Token"
+- Git needs to be installed on Jenkins Worker
+- Pyhton 3 needs to installed on Jenkins worker
+- Requests needs to be installed on Jenkins worker: python3 -m pip install --upgrade pip
+-                                                   pip install requests
+
+*/ 
+
+pipeline {
+    agent any
+    parameters {
+        choice(name: 'BACKUP_VERSION', choices: ['1400', '1330', '1320'],  description: 'Sugar Version of the backup')
+        string(name: 'SUGAR_INSTANCE', defaultValue: 'https://ewnutrition-dev.sugaropencloud.eu/', description: 'URL of the Sugar instance')
+        string(name: 'SUGAR_INSIGHT', defaultValue: 'https://sugarcloud-insights-euc1.service.sugarcrm.com',  description: 'Sugar Version of the backup')
+    }
+    options {
+        // This is required if you want to clean before build
+        skipDefaultCheckout(true)
+    }
+     stages {
+        stage('Checkout') {
+            steps {
+                // cleanWs()
+                sh '''
+                    sudo -S rm -rf * < /home/ansible/password.secret
+                '''
+                git branch: 'CI_2.0', credentialsId: 'GitHub Sugar User', url: 'https://github.com/nbleyh-sugarcrm/ps-packager'
+            }
+        }
+        stage('Setup Sugar Instance') {
+          steps {
+            withCredentials([usernamePassword(credentialsId: 'SUGAR User', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                sh '''
+                    python3 src/builder.py -r ${SUGAR_INSTANCE} -i ${SUGAR_INSIGHT} -u $USERNAME -p $PASSWORD -v ${BACKUP_VERSION}
+                '''
+            }
+          }
+        }
+    }
+}        
