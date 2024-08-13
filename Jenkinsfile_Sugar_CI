@@ -23,7 +23,7 @@ pipeline {
         string(name: 'PACKAGE_NAME', defaultValue: 'Package', description: 'Name of the Sugar Package')
         string(name: 'POST_FOLDER', defaultValue: '', description: 'Folder of the Post scripts. When left empty, default location will be used.')
         string(name: 'PRE_FOLDER', defaultValue: '', description: 'Folder of the Pre scripts. When left empty, default location will be used.')
-        choice(name: 'BACKUP_VERSION', choices: ['1400', '1330', '1320'],  description: 'Sugar Version of the backup')
+        choice(name: 'BACKUP_VERSION', choices: ['1410', '1400', '1330'],  description: 'Sugar Version of the backup')
         string(name: 'SUGAR_INSTANCE', defaultValue: 'https://ewnutrition-dev.sugaropencloud.eu/', description: 'URL of the Sugar instance')
         string(name: 'SUGAR_INSIGHT', defaultValue: 'https://sugarcloud-insights-euc1.service.sugarcrm.com',  description: 'Sugar Version of the backup')
     }
