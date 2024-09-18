@@ -89,7 +89,7 @@ class Packager():
         if (not path.exists(self.packagePath)):
             os.mkdir(self.packagePath)
         os.chdir(self.repoPath)
-        os.system("rsync -R $(git diff --diff-filter=ACMR "+self.base+".."+self.target+" --name-only) "+self.deltaPath)
+        os.system("git diff --diff-filter=ACMR "+self.base+".."+self.target+" --name-only |rsync -s --files-from=- --relative --prune-empty-dirs ./ "+self.deltaPath)
 
     def processDeletedFiles(self):
         # Are there files to be deleted
