@@ -79,7 +79,7 @@ pipeline {
             steps {
                 sh '''
                     set +e
-                    sudo -S docker exec -t --user sugar sugar-web1 /bin/sh -c 'composer install && cd tests/unit-php && ../../vendor/bin/phpunit --log-junit results.xml' < /home/ansible/password.secret
+                    sudo -S docker exec -t --user sugar sugar-web1 /bin/sh -c 'composer install --no-scripts && cd tests/unit-php && ../../vendor/bin/phpunit --log-junit results.xml' < /home/ansible/password.secret
                     set -e
                 '''
                 junit 'data/sugar/results.xml'
