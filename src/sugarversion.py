@@ -93,7 +93,7 @@ class SugarVersion():
         return self.getPHPUnitTests().split("/")[-1]
 
     def getInstanceFolderName(self):
-        return "sugar"+self.version+"ent"
+        return "sugar"+self.version
 
     def getSQLFileName(self):
         return self.getInstanceFolderName()+".sql"
