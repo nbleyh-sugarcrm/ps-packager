@@ -133,7 +133,7 @@ class Builder():
         config_override.write("\n$sugar_config['dbconfig']['db_name'] = 'sugar';")
         config_override.write("\n$sugar_config['full_text_engine']['Elastic']['host'] = 'sugar-elasticsearch';")
         config_override.write("\n$sugar_config['full_text_engine']['Elastic']['port'] = '9200';  ")
-        config_override.write("\n$sugar_config['moduleInstaller']['packageScan'] = false;")
+        # config_override.write("\n$sugar_config['moduleInstaller']['packageScan'] = false;")
         config_override.close()
         # QRR
         shutil.copy(self.repairScript, self.dataPath+"/sugar/")
