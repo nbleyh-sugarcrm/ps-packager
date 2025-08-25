@@ -9,7 +9,7 @@ class Manifest():
 
     def __init__(self):
        date_time = datetime.fromtimestamp(int(time.time()))
-       self.attributes = {'author' : "SugarCRM Projects", 'key' :  int(time.time()) , 'published_date' : date_time.strftime("%Y-%m-%d %H:%M:%S"), 'is_uninstallable' : 'false', 'type' : 'module'}
+       self.attributes = {'author' : "SugarCRM Projects", 'key' :  int(time.time()) , 'published_date' : date_time.strftime("%Y-%m-%d %H:%M:%S"), 'is_uninstallable' : 'true', 'type' : 'module'}
        self.manifestArray = "$manifest"
        self.installdefsArray = "$installdefs"
 
