@@ -28,10 +28,7 @@ class Manifest():
         self.attributes['version'] = version
 
     def createManifest(self, packagePath, copy):
-        if copy:
-            self.installDefs = {'id' : int(time.time()), 'copy' : {0 : {'from' : '<basepath>/files', 'to' : '.' } }}
-        else:
-            self.installDefs = {'id' : int(time.time())}
+        self.installDefs = {'id' : int(time.time())}
         self.manifest = {self.manifestArray : self.attributes, self.installdefsArray : self.installDefs}
         self.setRemoveFiles(packagePath+"/delete.txt")
         self.setPostScripts(packagePath+"/scripts/post")
