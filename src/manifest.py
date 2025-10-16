@@ -36,6 +36,7 @@ class Manifest():
         self.setRemoveFiles(packagePath+"/delete.txt")
         self.setPostScripts(packagePath+"/scripts/post")
         self.setPreScripts(packagePath+"/scripts/pre")
+        self.setCopyPaths(packagePath+"/files")
         self.ManifestFile = open(packagePath+"/manifest.php", 'a')
         self.ManifestFile.write("<?php  \n")
         self.writeManifest(self.manifest, "")
@@ -50,6 +51,22 @@ class Manifest():
                 removeFiles[i] = line.rstrip()
                 i=i+1
             self.installDefs['remove_files'] = removeFiles
+
+    def setCopyPaths(self, filepath):
+        if path.exists(filepath):
+            i = 0
+            copyFiles = {}
+            for root, dirs, files in os.walk(filepath):
+                for file in files:
+                    # Get the relative path from the base directory
+                    rel_path = os.path.relpath(os.path.join(root, file), filepath)
+                    copy = {}
+                    copy['from'] = "<basepath>/files/"+rel_path
+                    copy['to'] = rel_path
+                    copyFiles[i] = copy
+                    i=i+1
+            self.installDefs['copy'] = copyFiles
+
 
     def setPostScripts(self, filepath):
         if path.exists(filepath):
