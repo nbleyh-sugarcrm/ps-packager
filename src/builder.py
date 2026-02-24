@@ -139,7 +139,7 @@ class Builder():
         shutil.copy(self.repairScript, self.dataPath+"/sugar/")
         # Copy files for anonymize function
         commandPath = self.dataPath+"sugar/custom/src/Console/Command"
-        os.makedirs(commandPath)
+        os.makedirs(commandPath, exist_ok=True)
         shutil.copy(self.dbCommand, commandPath)
         registerPath = self.dataPath+"sugar/custom/Extension/application/Ext/Console"
         os.makedirs(registerPath)
