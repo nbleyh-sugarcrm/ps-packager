@@ -142,7 +142,7 @@ class Builder():
         os.makedirs(commandPath, exist_ok=True)
         shutil.copy(self.dbCommand, commandPath)
         registerPath = self.dataPath+"sugar/custom/Extension/application/Ext/Console"
-        os.makedirs(registerPath)
+        os.makedirs(registerPath, exist_ok=True)
         shutil.copy(self.registerDbCommand, registerPath)
 
     def anonymize(self):
