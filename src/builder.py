@@ -8,8 +8,9 @@ import subprocess
 import datetime
 import sugarversion
 import requests
+import json
 
-# Command: python3 src/builder.py -r https://cht-dev.sugaropencloud.eu/ -i https://sugarcloud-insights-euc1.service.sugarcrm.com -u nbleyh -p *** -v 1220
+# Command: python3 src/builder.py -r https://stuttgart-dev.sugaropencloud.eu -i https://sugarcloud-insights-euc1.service.sugarcrm.com -u nbleyh -p Password123 -v 2520
 
 # Sets up a Sugar instance based on a backup
 class Builder():
@@ -28,6 +29,7 @@ class Builder():
         self.sugarAuthURL = sugarURL+"/rest/v11/oauth2/token"
         self.sugarInsightsURL = insightsURL+"/api/v1/backups"
         self.FQDN =  sugarURL.replace("https://", "").replace("/", "")
+        self.backupFileName = "backup.tar.gz"
 
     def setupInstance(self):
         print("1. Cleanup...")
@@ -77,10 +79,9 @@ class Builder():
             }
         backupResponse = requests.get(url = self.sugarInsightsURL, headers=header)
         downloadURL = backupResponse.json()["backups"][0]['download_url']
-        self.backupName = downloadURL.split("/")[-1]
 
         print("Download backup...")
-        os.system("wget -P "+os.getcwd()+" "+downloadURL)
+        os.system("wget -P "+os.getcwd()+" -O "+self.backupFileName+" '"+downloadURL+"'")
         self.extractBackup()
         print("Download upgrader...")
         os.system("wget -P "+self.dataPath+" "+self.sugarVersion.getSilentUpgrader())
@@ -93,7 +94,7 @@ class Builder():
         os.system("unzip -qq -o "+self.dataPath+"/"+self.sugarVersion.getUnitTestsFile()+" -d data/sugar")
 
     def extractBackup(self):
-        tar = tarfile.open(os.getcwd()+"/"+self.backupName, "r:gz")
+        tar = tarfile.open(os.getcwd()+"/"+self.backupFileName, "r:gz")
         members = []
         for member in tar.getmembers():
             if self.sugarVersion.getInstanceFolderName() in member.path and not member.name.endswith("sql") :
